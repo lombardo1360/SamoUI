@@ -53,7 +53,7 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           if (response.codigo === 200) {
-            this.convenios = response.datos || [];
+            this.convenios = Array.isArray(response.datos) ? response.datos : (response.datos ? [response.datos] : []);
             this.calcularPaginacion(response);
             console.log('✅ Convenios cargados:', this.convenios);
           } else {
@@ -120,8 +120,6 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
    * Editar convenio existente
    */
   editarConvenio(convenio: any): void {
-    console.log('Editando convenio:', convenio);
-    // Implementar navegación a edición
     this.router.navigate(['/convenio/editar', convenio.id]);
   }
 

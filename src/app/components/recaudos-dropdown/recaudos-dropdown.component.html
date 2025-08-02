@@ -1,285 +1,404 @@
-<div class="recaudos-container">
-  <!-- Hero Section -->
-  <div class="hero-section">
-    <div class="hero-content">
-      <h1 class="hero-title">Sistema de Recaudos</h1>
-      <p class="hero-subtitle">Gestiona recaudos, ámbitos de atención, excepciones y programas de convenio de manera eficiente</p>
+<div class="convenio-recaudo-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1 class="main-title">
+      <span *ngIf="!showFormulario">📋 Convenios Configurados</span>
+      <span *ngIf="showFormulario">➕ Nuevo Convenio de Recaudo</span>
+    </h1>
+  </div>
+
+  <!-- Lista de Convenios Configurados -->
+  <div *ngIf="!showFormulario" class="lista-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-section">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Cargando convenios configurados...</p>
     </div>
-  </div>
 
-  <!-- Estado de carga -->
-  <div *ngIf="isLoading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Cargando recaudos, ámbitos, excepciones y programas...</p>
-  </div>
-
-  <!-- Estado de error -->
-  <div *ngIf="error && !isLoading" class="error-state">
-    <div class="error-icon">⚠️</div>
-    <p class="error-message">{{ error }}</p>
-    <button class="retry-button" (click)="retry()">Reintentar</button>
-  </div>
-
-  <!-- Main Grid Layout -->
-  <div *ngIf="!isLoading && !error" class="main-grid">
-    
-    <!-- Sidebar con Recaudos -->
-    <div class="sidebar-section">
-      <div class="section-card">
-        <div class="card-header">
-          <h2 class="card-title">Recaudos Disponibles</h2>
-          <span class="badge">{{ recaudos.length }}</span>
-        </div>
-        
-        <div class="dropdown-wrapper">
-          <select 
-            id="recaudos-select"
-            class="modern-select"
-            (change)="onRecaudoSelect($event)"
-            [disabled]="recaudos.length === 0">
-            
-            <option value="">Seleccionar recaudo...</option>
-            <option 
-              *ngFor="let recaudo of recaudos; let i = index" 
-              [value]="recaudo.id">
-              {{ recaudo.name }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Info del recaudo seleccionado -->
-        <div *ngIf="selectedRecaudo" class="selected-recaudo-info">
-          <div class="info-header">
-            <h3>{{ selectedRecaudo.name || selectedRecaudo.nombre }}</h3>
-            <span class="status-badge" [class.active]="selectedRecaudo.estado" [class.inactive]="!selectedRecaudo.estado">
-              {{ selectedRecaudo.estado ? 'Activo' : 'Inactivo' }}
-            </span>
-          </div>
-          <div class="info-details">
-            <div class="detail-item">
-              <span class="label">ID:</span>
-              <span class="value">{{ selectedRecaudo.id }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">Operación:</span>
-              <span class="value">{{ selectedRecaudo.operacionId }}</span>
-            </div>
-          </div>
-        </div>
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-section">
+      <div class="error-card">
+        <span class="error-icon">❌</span>
+        <p class="error-text">{{ error }}</p>
+        <button class="retry-button" (click)="loadConveniosConfigurados()">
+          Reintentar
+        </button>
       </div>
     </div>
 
-    <!-- Content Area con Cards -->
-    <div class="content-section">
-      
-      <!-- Card de Ámbitos -->
-      <div class="content-card ambitos-card">
-        <div class="card-header">
-          <div class="header-content">
-            <h2 class="card-title">Ámbitos de Atención</h2>
-            <div class="selection-counter">
-              {{ getSelectedAmbitosCount() }}/{{ ambitos.length }}
-            </div>
-          </div>
-          
-          <label class="toggle-all">
-            <input 
-              type="checkbox" 
-              [checked]="isAllAmbitosSelected()"
-              [class.indeterminate]="isAmbitosIndeterminate()"
-              (change)="toggleSelectAllAmbitos()">
-            <span class="toggle-checkmark"></span>
-            <span class="toggle-text">Seleccionar todos</span>
-          </label>
-        </div>
-
-        <div class="options-grid">
-          <label 
-            *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" 
-            class="option-card"
-            [class.selected]="ambito.selected">
-            <input 
-              type="checkbox" 
-              [checked]="ambito.selected"
-              (change)="onAmbitoSelectionChange(ambito)">
-            <div class="option-content">
-              <span class="option-checkmark"></span>
-              <span class="option-text">{{ ambito.name }}</span>
-            </div>
-          </label>
-        </div>
-
-        <div *ngIf="getSelectedAmbitosCount() > 0" class="selection-summary ambitos-summary">
-          <div class="summary-header">
-            <span class="summary-icon">✓</span>
-            <span class="summary-title">{{ getSelectedAmbitosCount() }} ámbitos seleccionados</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card de Excepciones -->
-      <div class="content-card excepciones-card">
-        <div class="card-header">
-          <div class="header-content">
-            <h2 class="card-title">Otras Excepciones</h2>
-            <div class="selection-counter">
-              {{ getSelectedExcepcionesCount() }}/{{ excepciones.length }}
-            </div>
-          </div>
-          
-          <label class="toggle-all">
-            <input 
-              type="checkbox" 
-              [checked]="isAllExcepcionesSelected()"
-              [class.indeterminate]="isExcepcionesIndeterminate()"
-              (change)="toggleSelectAllExcepciones()">
-            <span class="toggle-checkmark"></span>
-            <span class="toggle-text">Seleccionar todas</span>
-          </label>
-        </div>
-
-        <div class="options-grid">
-          <label 
-            *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId" 
-            class="option-card"
-            [class.selected]="excepcion.selected">
-            <input 
-              type="checkbox" 
-              [checked]="excepcion.selected"
-              (change)="onExcepcionSelectionChange(excepcion)">
-            <div class="option-content">
-              <span class="option-checkmark"></span>
-              <span class="option-text">{{ excepcion.name }}</span>
-            </div>
-          </label>
-        </div>
-
-        <div *ngIf="getSelectedExcepcionesCount() > 0" class="selection-summary excepciones-summary">
-          <div class="summary-header">
-            <span class="summary-icon">✓</span>
-            <span class="summary-title">{{ getSelectedExcepcionesCount() }} excepciones seleccionadas</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card de Programas -->
-      <div class="content-card programas-card">
-        <div class="card-header">
-          <div class="header-content">
-            <h2 class="card-title">Programas de Convenio</h2>
-            <div class="selection-counter">
-              {{ getSelectedProgramasCount() }}/{{ programas.length }}
-            </div>
-          </div>
-          
-          <label class="toggle-all">
-            <input 
-              type="checkbox" 
-              [checked]="isAllProgramasSelected()"
-              [class.indeterminate]="isProgramasIndeterminate()"
-              (change)="toggleSelectAllProgramas()">
-            <span class="toggle-checkmark"></span>
-            <span class="toggle-text">Seleccionar todos</span>
-          </label>
-        </div>
-
-        <div class="options-grid">
-          <label 
-            *ngFor="let programa of programas; trackBy: trackByProgramaId" 
-            class="option-card"
-            [class.selected]="programa.selected">
-            <input 
-              type="checkbox" 
-              [checked]="programa.selected"
-              (change)="onProgramaSelectionChange(programa)">
-            <div class="option-content">
-              <span class="option-checkmark"></span>
-              <span class="option-text">{{ programa.name }}</span>
-            </div>
-          </label>
-        </div>
-
-        <div *ngIf="getSelectedProgramasCount() > 0" class="selection-summary programas-summary">
-          <div class="summary-header">
-            <span class="summary-icon">✓</span>
-            <span class="summary-title">{{ getSelectedProgramasCount() }} programas seleccionados</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Action Section -->
-    <div class="action-section">
-      <!-- Botones de Acción -->
-      <div class="action-buttons">
-        <!-- Botón de Añadir -->
-        <button 
-          class="action-button add-button"
-          [disabled]="!selectedRecaudo"
-          (click)="addConfiguration()">
-          <span class="button-content">
+    <!-- Tabla de Convenios -->
+    <div *ngIf="!isLoading && !error" class="table-container">
+      <div class="table-header">
+        <div class="table-actions">
+          <button class="add-button" (click)="mostrarFormulario()">
             <span class="button-icon">➕</span>
-            <span class="button-text">Añadir</span>
-          </span>
-        </button>
-
-        <!-- Botón de Guardar -->
-        <button 
-          class="action-button save-button"
-          [disabled]="!canSave()"
-          [class.loading]="isSaving"
-          (click)="guardarConfiguracion()">
-          
-          <span *ngIf="!isSaving" class="button-content">
-            <span class="button-icon">💾</span>
-            <span class="button-text">Guardar</span>
-          </span>
-          
-          <span *ngIf="isSaving" class="button-content loading-content">
-            <span class="loading-spinner"></span>
-            <span class="button-text">Guardando...</span>
-          </span>
-        </button>
-
-        <!-- Botón de Limpiar -->
-        <button 
-          class="action-button clear-button"
-          [disabled]="!hasSelections()"
-          (click)="clearAllSelections()">
-          <span class="button-content">
-            <span class="button-icon">🗑️</span>
-            <span class="button-text">Limpiar</span>
-          </span>
-        </button>
+            <span class="button-text">Nuevo Convenio</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Messages Section -->
-      <div class="messages-section">
-        <!-- Mensaje de éxito -->
-        <div *ngIf="saveSuccess" class="success-message">
-          <span class="success-icon">✅</span>
-          <span class="success-text">Configuración guardada exitosamente</span>
-        </div>
+      <div class="table-content">
+        <table class="convenios-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Convenio ID</th>
+              <th>Nivel Recaudo ID</th>
+              <th>Fecha Creación</th>
+              <th>Usuario</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let convenio of conveniosConfigurados" class="table-row">
+              <td>{{ convenio.id }}</td>
+              <td>{{ convenio.convenioId }}</td>
+              <td>{{ convenio.nivelRecaudoId }}</td>
+              <td>{{ formatearFecha(convenio.fechaCreacion) }}</td>
+              <td>{{ convenio.usuarioId }}</td>
+              <td>
+                <span class="status-badge" [class.active]="convenio.activo" [class.inactive]="!convenio.activo">
+                  {{ convenio.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="edit-button" title="Editar">
+                    <span>✏️</span>
+                  </button>
+                  <button class="delete-button" title="Eliminar">
+                    <span>🗑️</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        <!-- Mensaje de error específico para guardar -->
-        <div *ngIf="error && !isLoading" class="error-message-inline">
-          <span class="error-icon">⚠️</span>
-          <span class="error-text">{{ error }}</span>
+        <!-- Empty State -->
+        <div *ngIf="conveniosConfigurados.length === 0" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>No hay convenios configurados</h3>
+          <p>Crea tu primer convenio de recaudo haciendo clic en "Nuevo Convenio"</p>
+          <button class="add-button primary" (click)="mostrarFormulario()">
+            <span class="button-icon">➕</span>
+            <span class="button-text">Crear Primer Convenio</span>
+          </button>
         </div>
+      </div>
 
-        <!-- Información de ayuda -->
-        <div class="help-info" *ngIf="!selectedRecaudo">
-          <span class="help-icon">💡</span>
-          <span class="help-text">Seleccione un recaudo para poder guardar la configuración</span>
+      <!-- Paginación -->
+      <div *ngIf="totalPaginas > 1" class="pagination-container">
+        <div class="pagination">
+          <button 
+            class="pagination-button"
+            [disabled]="paginaActual === 1"
+            (click)="cambiarPagina(paginaActual - 1)">
+            ‹ Anterior
+          </button>
+          
+          <button 
+            *ngFor="let pagina of getPaginas()"
+            class="pagination-button"
+            [class.active]="pagina === paginaActual"
+            (click)="cambiarPagina(pagina)">
+            {{ pagina }}
+          </button>
+          
+          <button 
+            class="pagination-button"
+            [disabled]="paginaActual === totalPaginas"
+            (click)="cambiarPagina(paginaActual + 1)">
+            Siguiente ›
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Estado sin datos -->
-  <div *ngIf="!isLoading && !error && recaudos.length === 0" class="empty-state">
-    <div class="empty-icon">📋</div>
-    <h3>No hay recaudos disponibles</h3>
-    <p>No se encontraron recaudos para mostrar en este momento.</p>
+  <div *ngIf="showFormulario" class="formulario-container">
+    <!-- Botón de Cancelar/Volver -->
+    <div class="form-header">
+      <button class="back-button" (click)="mostrarLista()">
+        <span class="back-icon">‹</span>
+        <span class="back-text">Volver a la lista</span>
+      </button>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando recaudos, ámbitos, excepciones y programas...</p>
+    </div>
+
+    <!-- Estado de error -->
+    <div *ngIf="error && !isLoading" class="error-state">
+      <div class="error-icon">⚠️</div>
+      <p class="error-message">{{ error }}</p>
+      <button class="retry-button" (click)="retry()">Reintentar</button>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div *ngIf="!isLoading && !error" class="main-grid">
+      
+      <!-- Sidebar con Recaudos -->
+      <div class="sidebar-section">
+        <div class="section-card">
+          <div class="card-header">
+            <h2 class="card-title">Recaudos Disponibles</h2>
+            <span class="badge">{{ recaudos.length }}</span>
+          </div>
+          
+          <div class="dropdown-wrapper">
+            <select 
+              id="recaudos-select"
+              class="modern-select"
+              (change)="onRecaudoSelect($event)"
+              [disabled]="recaudos.length === 0">
+              
+              <option value="">Seleccionar recaudo...</option>
+              <option 
+                *ngFor="let recaudo of recaudos; let i = index" 
+                [value]="recaudo.id">
+                {{ recaudo.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Info del recaudo seleccionado -->
+          <div *ngIf="selectedRecaudo" class="selected-recaudo-info">
+            <div class="info-header">
+              <h3>{{ selectedRecaudo.name || selectedRecaudo.nombre }}</h3>
+              <span class="status-badge" [class.active]="selectedRecaudo.estado" [class.inactive]="!selectedRecaudo.estado">
+                {{ selectedRecaudo.estado ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            <div class="info-details">
+              <div class="detail-item">
+                <span class="label">ID:</span>
+                <span class="value">{{ selectedRecaudo.id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Operación:</span>
+                <span class="value">{{ selectedRecaudo.operacionId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area con Cards -->
+      <div class="content-section">
+        
+        <!-- Card de Ámbitos -->
+        <div class="content-card ambitos-card">
+          <div class="card-header">
+            <div class="header-content">
+              <h2 class="card-title">Ámbitos de Atención</h2>
+              <div class="selection-counter">
+                {{ getSelectedAmbitosCount() }}/{{ ambitos.length }}
+              </div>
+            </div>
+            
+            <label class="toggle-all">
+              <input 
+                type="checkbox" 
+                [checked]="isAllAmbitosSelected()"
+                [class.indeterminate]="isAmbitosIndeterminate()"
+                (change)="toggleSelectAllAmbitos()">
+              <span class="toggle-checkmark"></span>
+              <span class="toggle-text">Seleccionar todos</span>
+            </label>
+          </div>
+
+          <div class="options-grid">
+            <label 
+              *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" 
+              class="option-card"
+              [class.selected]="ambito.selected">
+              <input 
+                type="checkbox" 
+                [checked]="ambito.selected"
+                (change)="onAmbitoSelectionChange(ambito)">
+              <div class="option-content">
+                <span class="option-checkmark"></span>
+                <span class="option-text">{{ ambito.name }}</span>
+              </div>
+            </label>
+          </div>
+
+          <div *ngIf="getSelectedAmbitosCount() > 0" class="selection-summary ambitos-summary">
+            <div class="summary-header">
+              <span class="summary-icon">✓</span>
+              <span class="summary-title">{{ getSelectedAmbitosCount() }} ámbitos seleccionados</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card de Excepciones -->
+        <div class="content-card excepciones-card">
+          <div class="card-header">
+            <div class="header-content">
+              <h2 class="card-title">Otras Excepciones</h2>
+              <div class="selection-counter">
+                {{ getSelectedExcepcionesCount() }}/{{ excepciones.length }}
+              </div>
+            </div>
+            
+            <label class="toggle-all">
+              <input 
+                type="checkbox" 
+                [checked]="isAllExcepcionesSelected()"
+                [class.indeterminate]="isExcepcionesIndeterminate()"
+                (change)="toggleSelectAllExcepciones()">
+              <span class="toggle-checkmark"></span>
+              <span class="toggle-text">Seleccionar todas</span>
+            </label>
+          </div>
+
+          <div class="options-grid">
+            <label 
+              *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId" 
+              class="option-card"
+              [class.selected]="excepcion.selected">
+              <input 
+                type="checkbox" 
+                [checked]="excepcion.selected"
+                (change)="onExcepcionSelectionChange(excepcion)">
+              <div class="option-content">
+                <span class="option-checkmark"></span>
+                <span class="option-text">{{ excepcion.name }}</span>
+              </div>
+            </label>
+          </div>
+
+          <div *ngIf="getSelectedExcepcionesCount() > 0" class="selection-summary excepciones-summary">
+            <div class="summary-header">
+              <span class="summary-icon">✓</span>
+              <span class="summary-title">{{ getSelectedExcepcionesCount() }} excepciones seleccionadas</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card de Programas -->
+        <div class="content-card programas-card">
+          <div class="card-header">
+            <div class="header-content">
+              <h2 class="card-title">Programas de Convenio</h2>
+              <div class="selection-counter">
+                {{ getSelectedProgramasCount() }}/{{ programas.length }}
+              </div>
+            </div>
+            
+            <label class="toggle-all">
+              <input 
+                type="checkbox" 
+                [checked]="isAllProgramasSelected()"
+                [class.indeterminate]="isProgramasIndeterminate()"
+                (change)="toggleSelectAllProgramas()">
+              <span class="toggle-checkmark"></span>
+              <span class="toggle-text">Seleccionar todos</span>
+            </label>
+          </div>
+
+          <div class="options-grid">
+            <label 
+              *ngFor="let programa of programas; trackBy: trackByProgramaId" 
+              class="option-card"
+              [class.selected]="programa.selected">
+              <input 
+                type="checkbox" 
+                [checked]="programa.selected"
+                (change)="onProgramaSelectionChange(programa)">
+              <div class="option-content">
+                <span class="option-checkmark"></span>
+                <span class="option-text">{{ programa.name }}</span>
+              </div>
+            </label>
+          </div>
+
+          <div *ngIf="getSelectedProgramasCount() > 0" class="selection-summary programas-summary">
+            <div class="summary-header">
+              <span class="summary-icon">✓</span>
+              <span class="summary-title">{{ getSelectedProgramasCount() }} programas seleccionados</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Section -->
+      <div class="action-section">
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+          <!-- Botón de Guardar -->
+          <button 
+            class="action-button save-button"
+            [disabled]="!canSave()"
+            [class.loading]="isSaving"
+            (click)="guardarConfiguracion()">
+            
+            <span *ngIf="!isSaving" class="button-content">
+              <span class="button-icon">💾</span>
+              <span class="button-text">Guardar</span>
+            </span>
+            
+            <span *ngIf="isSaving" class="button-content loading-content">
+              <span class="loading-spinner"></span>
+              <span class="button-text">Guardando...</span>
+            </span>
+          </button>
+
+          <!-- Botón de Limpiar -->
+          <button 
+            class="action-button clear-button"
+            [disabled]="!hasSelections()"
+            (click)="clearAllSelections()">
+            <span class="button-content">
+              <span class="button-icon">🗑️</span>
+              <span class="button-text">Limpiar</span>
+            </span>
+          </button>
+
+          <!-- Botón de Cancelar -->
+          <button 
+            class="action-button cancel-button"
+            (click)="mostrarLista()">
+            <span class="button-content">
+              <span class="button-icon">❌</span>
+              <span class="button-text">Cancelar</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Messages Section -->
+        <div class="messages-section">
+          <!-- Mensaje de éxito -->
+          <div *ngIf="saveSuccess" class="success-message">
+            <span class="success-icon">✅</span>
+            <span class="success-text">Configuración guardada exitosamente</span>
+          </div>
+
+          <!-- Mensaje de error específico para guardar -->
+          <div *ngIf="error && !isLoading" class="error-message-inline">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">{{ error }}</span>
+          </div>
+
+          <!-- Información de ayuda -->
+          <div class="help-info" *ngIf="!selectedRecaudo">
+            <span class="help-icon">💡</span>
+            <span class="help-text">Seleccione un recaudo para poder guardar la configuración</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado sin datos -->
+    <div *ngIf="!isLoading && !error && recaudos.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No hay recaudos disponibles</h3>
+      <p>No se encontraron recaudos para mostrar en este momento.</p>
+    </div>
   </div>
 </div>

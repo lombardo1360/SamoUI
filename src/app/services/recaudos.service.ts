@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, RecaudoOperacion, TablaDato, DatoTabla } from '../interfaces/api.interface';
+import { ApiResponse, RecaudoOperacion, TablaDato, DatoTabla, ConvenioRecaudoConfigurationList } from '../interfaces/api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -107,12 +107,15 @@ export class RecaudosService {
   /**
    * Obtener convenios recaudo configurados con paginación
    */
-  getConvenioRecaudoConfigurados(pagina: number = 1, tamanoPagina: number = 10): Observable<ApiResponse<any>> {
+  /**
+   * Obtener convenios recaudo configurados con paginación
+   */
+  getConvenioRecaudoConfigurados(pagina: number = 1, tamanoPagina: number = 10): Observable<ApiResponse<ConvenioRecaudoConfigurationList>> {
     const params = new HttpParams()
       .set('Pagina', pagina.toString())
       .set('TamañoPagina', tamanoPagina.toString());
     
-    return this.http.get<ApiResponse<any>>(
+    return this.http.get<ApiResponse<ConvenioRecaudoConfigurationList>>(
       `${this.API_BASE_URL}/ConvenioRecaudo/ConvenioRecaudoConfigurados`,
       { params }
     );

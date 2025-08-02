@@ -5,6 +5,25 @@ export interface ApiResponse<T> {
   datos: T;
 }
 
+// Interface para ConvenioRecaudo configurados
+export interface ConvenioRecaudoConfigurado {
+  id: number;
+  convenioId: number;
+  nivelRecaudoId: number;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+  usuarioId: string;
+  activo: boolean;
+  ambitoIds: number[] | null;
+  otroItemsIds: number[] | null;
+  programaIds: number[] | null;
+}
+
+export interface ConvenioRecaudoConfigurationList {
+  elementos: ConvenioRecaudoConfigurado[];
+  totalPaginas: number;
+}
+
 // Interface para login
 export interface LoginRequest {
   Username: string;

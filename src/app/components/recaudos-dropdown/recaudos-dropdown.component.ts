@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, combineLatest, switchMap, forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { RecaudosService } from '../../services/recaudos.service';
-import { RecaudoOperacion, DatoTabla, DatoSeleccionado } from '../../interfaces/api.interface';
+import { RecaudoOperacion, DatoTabla, DatoSeleccionado, ConvenioRecaudoConfigurado, ConvenioRecaudoConfigurationList } from '../../interfaces/api.interface';
 
 @Component({
   selector: 'app-recaudos-dropdown',
@@ -13,11 +13,23 @@ import { RecaudoOperacion, DatoTabla, DatoSeleccionado } from '../../interfaces/
   styleUrl: './recaudos-dropdown.component.scss'
 })
 export class RecaudosDropdownComponent implements OnInit, OnDestroy {
+  // Control de vista
+  showFormulario = false;
+  
+  // Datos del formulario
   recaudos: RecaudoOperacion[] = [];
   ambitos: DatoSeleccionado[] = [];
   excepciones: DatoSeleccionado[] = [];
   programas: DatoSeleccionado[] = [];
   selectedRecaudo: RecaudoOperacion | null = null;
+  
+  // Datos de la lista
+  conveniosConfigurados: ConvenioRecaudoConfigurado[] = [];
+  totalPaginas = 0;
+  paginaActual = 1;
+  tamanoPagina = 10;
+  
+  // Estados
   isLoading = false;
   isSaving = false;
   error: string | null = null;
@@ -31,7 +43,7 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.initializeData();
+    this.loadConveniosConfigurados();
   }
 
   ngOnDestroy(): void {
@@ -310,10 +322,11 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
           this.saveSuccess = true;
           console.log('✅ Configuración guardada exitosamente:', response);
           
-          // Mostrar mensaje de éxito por 3 segundos
+          // Mostrar mensaje de éxito y volver a la lista
           setTimeout(() => {
             this.saveSuccess = false;
-          }, 3000);
+            this.mostrarLista();
+          }, 2000);
         },
         error: (error) => {
           this.isSaving = false;
@@ -333,17 +346,11 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Añadir nueva configuración (placeholder para funcionalidad futura)
+   * Mostrar formulario para añadir nueva configuración
    */
   addConfiguration(): void {
-    if (!this.selectedRecaudo) {
-      return;
-    }
-    
-    console.log('➕ Añadiendo nueva configuración...');
-    // Aquí iría la lógica para añadir una nueva configuración
-    // Por ahora solo mostramos un mensaje
-    alert('Funcionalidad "Añadir" en desarrollo');
+    console.log('➕ Mostrando formulario para añadir nueva configuración...');
+    this.mostrarFormulario();
   }
 
   /**
@@ -375,6 +382,101 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
       this.programas.forEach(programa => programa.selected = false);
       
       console.log('🗑️ Todas las selecciones han sido limpiadas');
+      
+      // Mostrar la lista después de limpiar
+      this.mostrarLista();
     }
+  }
+
+  /**
+   * Cargar lista de convenios configurados
+   */
+  loadConveniosConfigurados(): void {
+    this.isLoading = true;
+    this.error = null;
+
+    this.recaudosService.getConvenioRecaudoConfigurados(this.paginaActual, this.tamanoPagina)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if (response.codigo === 200) {
+            this.conveniosConfigurados = response.datos.elementos;
+            this.totalPaginas = response.datos.totalPaginas;
+            console.log('✅ Convenios configurados cargados:', this.conveniosConfigurados);
+          } else {
+            this.error = response.mensaje || 'Error al cargar los convenios configurados';
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.error = 'Error al cargar los convenios configurados. Intente nuevamente.';
+          console.error('❌ Error al cargar convenios configurados:', error);
+        }
+      });
+  }
+
+  /**
+   * Mostrar formulario para añadir convenio
+   */
+  mostrarFormulario(): void {
+    this.showFormulario = true;
+    this.initializeData();
+  }
+
+  /**
+   * Mostrar lista de convenios configurados
+   */
+  mostrarLista(): void {
+    this.showFormulario = false;
+    this.resetForm();
+    this.loadConveniosConfigurados();
+  }
+
+  /**
+   * Reiniciar formulario
+   */
+  private resetForm(): void {
+    this.selectedRecaudo = null;
+    this.ambitos = [];
+    this.excepciones = [];
+    this.programas = [];
+    this.error = null;
+    this.saveSuccess = false;
+  }
+
+  /**
+   * Cambiar página
+   */
+  cambiarPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.loadConveniosConfigurados();
+    }
+  }
+
+  /**
+   * Obtener array de páginas para la paginación
+   */
+  getPaginas(): number[] {
+    const paginas = [];
+    for (let i = 1; i <= this.totalPaginas; i++) {
+      paginas.push(i);
+    }
+    return paginas;
+  }
+
+  /**
+   * Formatear fecha para mostrar
+   */
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }
