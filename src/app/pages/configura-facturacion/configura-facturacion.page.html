@@ -1,0 +1,116 @@
+<div class="configura-facturacion-container">
+  <h2>Datos de Facturación</h2>
+  <form [formGroup]="facturacionForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <label>Forma Liquidación</label>
+      <input formControlName="formaLiquidacion" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Valor Límite</label>
+      <input formControlName="valorLimite" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Saldo Convenio</label>
+      <input formControlName="saldoConvenio" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Valor Hora</label>
+      <input formControlName="valorHora" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Límite Horas</label>
+      <input formControlName="limiteHoras" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Modalidad de contratación y pago</label>
+      <select formControlName="modalidadPago">
+        <option value="">Seleccione</option>
+        <option value="Anticipado">Anticipado</option>
+        <option value="Contraentrega">Contraentrega</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Cobertura y plan de beneficios</label>
+      <select formControlName="coberturaPlan">
+        <option value="">Seleccione</option>
+        <option value="Plan1">Plan 1</option>
+        <option value="Plan2">Plan 2</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Concepto Facturación</label>
+      <input formControlName="conceptoFacturacion" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Tipo de Capitación</label>
+      <input formControlName="tipoCapitacion" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Valor de Capitación</label>
+      <input formControlName="valorCapitacion" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Tipo UPC</label>
+      <input formControlName="tipoUpc" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Valor UPC Adicional</label>
+      <input formControlName="valorUpcAdicional" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Valor UPC Alianza</label>
+      <input formControlName="valorUpcAlianza" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Valor UPC</label>
+      <input formControlName="valorUpc" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Valor UPC Riesgo</label>
+      <input formControlName="valorUpcRiesgo" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Tipo de Factura</label>
+      <select formControlName="tipoFactura">
+        <option value="Estandar">Estandar</option>
+        <option value="En salud">En salud</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Comprobante Factura Cliente</label>
+      <input formControlName="comprobanteFactura" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Rubro Ingreso</label>
+      <input formControlName="rubroIngreso" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Modalidad de Pago</label>
+      <select formControlName="modalidadPagoPaciente">
+        <option value="Anticipado">Anticipado</option>
+        <option value="Contraentrega">Contraentrega</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Valor por Paciente</label>
+      <input formControlName="valorPorPaciente" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Tipo Código Factura</label>
+      <input formControlName="tipoCodigoFactura" type="text" />
+    </div>
+    <div class="form-row">
+      <label>Días Hábiles Para Responder Glosas</label>
+      <input formControlName="diasHabilesGlosas" type="number" />
+    </div>
+    <div class="form-row">
+      <label>Periodicidad Facturación Cada</label>
+      <input formControlName="periodicidadFacturacion" type="number" />
+      <select formControlName="periodicidadUnidad">
+        <option value="Dias">Días</option>
+        <option value="Meses">Meses</option>
+      </select>
+    </div>
+    <button type="submit" [disabled]="!facturacionForm.valid">Guardar</button>
+  </form>
+</div>
