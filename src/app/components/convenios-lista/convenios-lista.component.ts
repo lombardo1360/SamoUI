@@ -55,7 +55,6 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
           if (response.codigo === 200) {
             this.convenios = Array.isArray(response.datos) ? response.datos : (response.datos ? [response.datos] : []);
             this.calcularPaginacion(response);
-            console.log('✅ Convenios cargados:', this.convenios);
           } else {
             this.error = response.mensaje || 'Error al cargar los convenios';
           }
@@ -63,7 +62,6 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isLoading = false;
           this.error = 'Error al conectar con el servidor';
-          console.error('❌ Error al cargar convenios:', error);
         }
       });
   }

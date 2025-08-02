@@ -7,6 +7,72 @@
     </h1>
   </div>
 
+  <!-- Botones de Acción Globales -->
+  <div class="global-action-section">
+    <div class="action-buttons">
+      <!-- Botón de Añadir -->
+      <button 
+        class="action-button add-button"
+        [disabled]="showFormulario"
+        (click)="mostrarFormulario()">
+        <span class="button-content">
+          <span class="button-icon">➕</span>
+          <span class="button-text">Añadir</span>
+        </span>
+      </button>
+
+      <!-- Botón de Guardar -->
+      <button 
+        class="action-button save-button"
+        [disabled]="!canSave()"
+        [class.loading]="isSaving"
+        (click)="guardarConfiguracion()">
+        
+        <span *ngIf="!isSaving" class="button-content">
+          <span class="button-icon">💾</span>
+          <span class="button-text">Guardar</span>
+        </span>
+        
+        <span *ngIf="isSaving" class="button-content loading-content">
+          <span class="loading-spinner"></span>
+          <span class="button-text">Guardando...</span>
+        </span>
+      </button>
+
+      <!-- Botón de Cancelar -->
+      <button 
+        class="action-button cancel-button"
+        [disabled]="!showFormulario && !hasSelections()"
+        (click)="cancelarOperacion()">
+        <span class="button-content">
+          <span class="button-icon">❌</span>
+          <span class="button-text">Cancelar</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="messages-section">
+      <!-- Mensaje de éxito -->
+      <div *ngIf="saveSuccess" class="success-message">
+        <span class="success-icon">✅</span>
+        <span class="success-text">Configuración guardada exitosamente</span>
+      </div>
+
+      <!-- Mensaje de error específico para guardar -->
+      <div *ngIf="error && !isLoading" class="error-message-inline">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">{{ error }}</span>
+      </div>
+
+      <!-- Información de ayuda para la lista -->
+      <div class="help-info" *ngIf="!showFormulario && conveniosConfigurados.length === 0 && !isLoading && !error">
+        <span class="help-icon">📝</span>
+        <span class="help-text">No hay convenios configurados. Haga clic en "Guardar" para crear uno nuevo.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Lista de Convenios Configurados -->
   <div *ngIf="!showFormulario" class="lista-container">
     <!-- Loading State -->
@@ -118,13 +184,6 @@
   </div>
 
   <div *ngIf="showFormulario" class="formulario-container">
-    <!-- Botón de Cancelar/Volver -->
-    <div class="form-header">
-      <button class="back-button" (click)="mostrarLista()">
-        <span class="back-icon">‹</span>
-        <span class="back-text">Volver a la lista</span>
-      </button>
-    </div>
 
     <!-- Estado de carga -->
     <div *ngIf="isLoading" class="loading-state">
@@ -323,72 +382,6 @@
               <span class="summary-icon">✓</span>
               <span class="summary-title">{{ getSelectedProgramasCount() }} programas seleccionados</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Section -->
-      <div class="action-section">
-        <!-- Botones de Acción -->
-        <div class="action-buttons">
-          <!-- Botón de Guardar -->
-          <button 
-            class="action-button save-button"
-            [disabled]="!canSave()"
-            [class.loading]="isSaving"
-            (click)="guardarConfiguracion()">
-            
-            <span *ngIf="!isSaving" class="button-content">
-              <span class="button-icon">💾</span>
-              <span class="button-text">Guardar</span>
-            </span>
-            
-            <span *ngIf="isSaving" class="button-content loading-content">
-              <span class="loading-spinner"></span>
-              <span class="button-text">Guardando...</span>
-            </span>
-          </button>
-
-          <!-- Botón de Limpiar -->
-          <button 
-            class="action-button clear-button"
-            [disabled]="!hasSelections()"
-            (click)="clearAllSelections()">
-            <span class="button-content">
-              <span class="button-icon">🗑️</span>
-              <span class="button-text">Limpiar</span>
-            </span>
-          </button>
-
-          <!-- Botón de Cancelar -->
-          <button 
-            class="action-button cancel-button"
-            (click)="mostrarLista()">
-            <span class="button-content">
-              <span class="button-icon">❌</span>
-              <span class="button-text">Cancelar</span>
-            </span>
-          </button>
-        </div>
-
-        <!-- Messages Section -->
-        <div class="messages-section">
-          <!-- Mensaje de éxito -->
-          <div *ngIf="saveSuccess" class="success-message">
-            <span class="success-icon">✅</span>
-            <span class="success-text">Configuración guardada exitosamente</span>
-          </div>
-
-          <!-- Mensaje de error específico para guardar -->
-          <div *ngIf="error && !isLoading" class="error-message-inline">
-            <span class="error-icon">⚠️</span>
-            <span class="error-text">{{ error }}</span>
-          </div>
-
-          <!-- Información de ayuda -->
-          <div class="help-info" *ngIf="!selectedRecaudo">
-            <span class="help-icon">💡</span>
-            <span class="help-text">Seleccione un recaudo para poder guardar la configuración</span>
           </div>
         </div>
       </div>

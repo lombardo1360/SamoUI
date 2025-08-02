@@ -434,6 +434,19 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Cancelar operación actual
+   */
+  cancelarOperacion(): void {
+    if (this.showFormulario) {
+      // Si está en el formulario, volver a la lista
+      this.mostrarLista();
+    } else {
+      // Si está en la lista, limpiar selecciones
+      this.clearAllSelections();
+    }
+  }
+
+  /**
    * Reiniciar formulario
    */
   private resetForm(): void {

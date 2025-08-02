@@ -1,0 +1,552 @@
+/* ================================
+   ESTILOS DEL FORMULARIO - OPTIMIZADO
+   ================================ */
+
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+/* ================================
+   FORMULARIO CONTAINER
+   ================================ */
+
+.formulario-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-header {
+  background: linear-gradient(135deg, $primary-600 0%, $primary-800 100%);
+  padding: $space-xl $space-2xl;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  
+  .back-button {
+    @include button-primary;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    gap: $space-sm;
+    padding: $space-md $space-lg;
+    position: relative;
+    z-index: 1;
+    
+    .back-icon {
+      font-size: 1.25rem;
+      transition: transform $transition-fast;
+    }
+    
+    .back-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateX(-3px);
+      
+      .back-icon {
+        transform: translateX(-2px);
+      }
+    }
+  }
+}
+
+/* ================================
+   ESTADOS
+   ================================ */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl;
+  min-height: 400px;
+  
+  .spinner {
+    @include loading-spinner(3rem);
+    margin-bottom: $space-lg;
+  }
+  
+  p {
+    color: $secondary-600;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    max-width: 300px;
+    line-height: 1.6;
+  }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl;
+  
+  .error-icon {
+    font-size: 3rem;
+    margin-bottom: $space-lg;
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  .error-message {
+    color: $error;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: $space-lg;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+  
+  .retry-button {
+    @include button-error;
+    padding: $space-md $space-xl;
+    font-weight: 600;
+  }
+}
+
+/* ================================
+   MAIN GRID
+   ================================ */
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "sidebar content"
+    "sidebar actions";
+  gap: $space-xl;
+  padding: $space-xl $space-2xl;
+  flex: 1;
+  
+  @include tablet {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "sidebar"
+      "content"
+      "actions";
+    gap: $space-lg;
+    padding: $space-lg;
+  }
+}
+
+/* ================================
+   SIDEBAR
+   ================================ */
+
+.sidebar-section {
+  grid-area: sidebar;
+  
+  .section-card {
+    @include card-base;
+    background: white;
+    border-radius: $radius-xl;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    
+    .card-header {
+      background: linear-gradient(135deg, $secondary-600 0%, $secondary-700 100%);
+      padding: $space-lg $space-xl;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .card-title {
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      
+      .badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: $space-xs $space-sm;
+        border-radius: $radius-full;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 24px;
+        text-align: center;
+      }
+    }
+    
+    .dropdown-wrapper {
+      padding: $space-xl;
+      
+      .modern-select {
+        width: 100%;
+        padding: $space-md $space-lg;
+        border: 2px solid $secondary-200;
+        border-radius: $radius-lg;
+        background: white;
+        color: $secondary-700;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all $transition-fast;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-500;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        &:hover:not(:disabled) {
+          border-color: $primary-300;
+        }
+        
+        &:disabled {
+          background: $secondary-50;
+          color: $secondary-400;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+/* ================================
+   CONTENT CARDS
+   ================================ */
+
+.content-section {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.content-card {
+  @include card-base;
+  background: white;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  .card-header {
+    background: linear-gradient(135deg, $secondary-50 0%, white 100%);
+    padding: $space-lg $space-xl;
+    border-bottom: 1px solid $secondary-200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: $space-md;
+      
+      .card-title {
+        color: $secondary-800;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      
+      .selection-counter {
+        background: $primary-100;
+        color: $primary-700;
+        padding: $space-xs $space-sm;
+        border-radius: $radius-full;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
+    
+    .toggle-all {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      cursor: pointer;
+      
+      input[type="checkbox"] {
+        display: none;
+      }
+      
+      .toggle-checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid $secondary-300;
+        border-radius: $radius-sm;
+        background: white;
+        position: relative;
+        transition: all $transition-fast;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          left: 6px;
+          top: 2px;
+          width: 6px;
+          height: 10px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg) scale(0);
+          transition: transform $transition-fast;
+        }
+      }
+      
+      input:checked + .toggle-checkmark {
+        background: $primary-500;
+        border-color: $primary-500;
+        
+        &::after {
+          transform: rotate(45deg) scale(1);
+        }
+      }
+      
+      .toggle-text {
+        color: $secondary-700;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .options-grid {
+    padding: $space-lg $space-xl;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $space-md;
+    
+    @include tablet {
+      grid-template-columns: 1fr;
+      padding: $space-md;
+    }
+  }
+  
+  .option-card {
+    display: flex;
+    align-items: center;
+    padding: $space-lg;
+    border: 2px solid $secondary-200;
+    border-radius: $radius-lg;
+    background: white;
+    cursor: pointer;
+    transition: all $transition-fast;
+    
+    &:hover {
+      border-color: $primary-300;
+      background: $primary-50;
+      transform: translateY(-2px);
+    }
+    
+    &.selected {
+      border-color: $primary-500;
+      background: linear-gradient(135deg, $primary-50 0%, $primary-100 100%);
+      
+      .option-checkmark {
+        background: $primary-500;
+        border-color: $primary-500;
+        
+        &::after {
+          transform: rotate(45deg) scale(1);
+        }
+      }
+    }
+    
+    input[type="checkbox"] {
+      display: none;
+    }
+    
+    .option-content {
+      display: flex;
+      align-items: center;
+      gap: $space-md;
+      flex: 1;
+    }
+    
+    .option-checkmark {
+      width: 20px;
+      height: 20px;
+      border: 2px solid $secondary-300;
+      border-radius: $radius-sm;
+      background: white;
+      position: relative;
+      transition: all $transition-fast;
+      flex-shrink: 0;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 6px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg) scale(0);
+        transition: transform $transition-fast;
+      }
+    }
+    
+    .option-text {
+      color: $secondary-800;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* ================================
+   ACTION SECTION
+   ================================ */
+
+.action-section {
+  grid-area: actions;
+  background: white;
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  .action-buttons {
+    display: flex;
+    gap: $space-md;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: $space-lg;
+    
+    @include mobile {
+      flex-direction: column;
+    }
+    
+    .action-button {
+      @include button-primary;
+      min-width: 140px;
+      
+      .button-content {
+        display: flex;
+        align-items: center;
+        gap: $space-sm;
+      }
+      
+      .button-icon {
+        font-size: 1rem;
+      }
+      
+      .button-text {
+        font-weight: 600;
+      }
+    }
+    
+    .save-button {
+      background: linear-gradient(135deg, $success-500 0%, $success-600 100%);
+      color: white;
+      border: 1px solid $success-600;
+      
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, $success-600 0%, $success-700 100%);
+      }
+    }
+    
+    .clear-button {
+      background: linear-gradient(135deg, $secondary-500 0%, $secondary-600 100%);
+      color: white;
+      border: 1px solid $secondary-600;
+    }
+    
+    .cancel-button {
+      background: white;
+      color: $error;
+      border: 2px solid $error-200;
+      
+      &:hover:not(:disabled) {
+        background: $error-50;
+        border-color: $error-300;
+      }
+    }
+  }
+}
+
+/* ================================
+   EMPTY STATE
+   ================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl;
+  text-align: center;
+  min-height: 400px;
+  
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: $space-lg;
+    color: $secondary-400;
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  h3 {
+    color: $secondary-700;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 $space-sm 0;
+  }
+  
+  p {
+    color: $secondary-500;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 400px;
+  }
+}
+
+/* ================================
+   ANIMACIONES
+   ================================ */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

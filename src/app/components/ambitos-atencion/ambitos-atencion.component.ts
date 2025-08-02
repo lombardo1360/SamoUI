@@ -47,12 +47,9 @@ export class AmbitosAtencionComponent implements OnInit, OnDestroy {
             selected: false
           }));
           this.isLoading = false;
-          console.log('✅ Ambitos de Atención Médica cargados:', this.ambitos);
         },
         error: (error) => {
-          this.error = 'Error al cargar los ámbitos de atención médica';
           this.isLoading = false;
-          console.error('❌ Error cargando ambitos:', error);
         }
       });
   }
@@ -64,7 +61,6 @@ export class AmbitosAtencionComponent implements OnInit, OnDestroy {
     ambito.selected = !ambito.selected;
     const seleccionados = this.ambitos.filter(a => a.selected);
     this.selectionChange.emit(seleccionados);
-    console.log('📋 Ambitos seleccionados:', seleccionados);
   }
 
   /**
