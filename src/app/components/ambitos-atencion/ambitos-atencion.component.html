@@ -1,0 +1,74 @@
+<div class="ambitos-container">
+  <div class="header">
+    <h2>Ámbitos de Atención Médica</h2>
+    <p class="subtitle">Seleccione los ámbitos que desea incluir</p>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando ámbitos de atención...</p>
+  </div>
+
+  <!-- Estado de error -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="retry()">Reintentar</button>
+  </div>
+
+  <!-- Lista de checkboxes -->
+  <div *ngIf="!isLoading && !error" class="checkbox-container">
+    
+    <!-- Header con seleccionar todos -->
+    <div class="selection-header">
+      <label class="checkbox-item select-all">
+        <input 
+          type="checkbox" 
+          [checked]="isAllSelected()"
+          [class.indeterminate]="isIndeterminate()"
+          (change)="toggleSelectAll()">
+        <span class="checkmark"></span>
+        <span class="label-text">
+          Seleccionar todos ({{ getSelectedCount() }}/{{ ambitos.length }})
+        </span>
+      </label>
+    </div>
+
+    <!-- Lista de ámbitos -->
+    <div class="ambitos-list">
+      <label 
+        *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" 
+        class="checkbox-item">
+        <input 
+          type="checkbox" 
+          [checked]="ambito.selected"
+          (change)="onSelectionChange(ambito)">
+        <span class="checkmark"></span>
+        <span class="label-text">{{ ambito.name }}</span>
+        <span *ngIf="ambito.id" class="ambito-id">ID: {{ ambito.id }}</span>
+      </label>
+    </div>
+
+    <!-- Resumen de selección -->
+    <div *ngIf="getSelectedCount() > 0" class="selection-summary">
+      <h3>Elementos Seleccionados ({{ getSelectedCount() }}):</h3>
+      <div class="selected-list">
+        <span 
+          *ngFor="let ambito of ambitos | slice:0:10; let last = last" 
+          [class.selected-item]="ambito.selected">
+          <span *ngIf="ambito.selected">{{ ambito.name }}</span><span *ngIf="ambito.selected && !last">, </span>
+        </span>
+        <span *ngIf="getSelectedCount() > 10" class="more-items">
+          ... y {{ getSelectedCount() - 10 }} más
+        </span>
+      </div>
+    </div>
+
+    <!-- Estado sin datos -->
+    <div *ngIf="ambitos.length === 0" class="no-data-state">
+      <div class="no-data-icon">📋</div>
+      <p>No se encontraron ámbitos de atención médica</p>
+    </div>
+  </div>
+</div>

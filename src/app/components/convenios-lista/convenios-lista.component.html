@@ -1,0 +1,141 @@
+<div class="convenios-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">📋 Convenios de Recaudo</h1>
+      <p class="page-subtitle">Gestión de convenios configurados</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-nuevo" (click)="nuevoConvenio()">
+        <span class="btn-icon">➕</span>
+        <span class="btn-text">Nuevo Convenio</span>
+      </button>
+      <button class="btn-recargar" (click)="recargar()" [disabled]="isLoading">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Recargar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Cargando convenios...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h3 class="error-title">Error al cargar convenios</h3>
+    <p class="error-message">{{ error }}</p>
+    <button class="btn-retry" (click)="recargar()">Reintentar</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && convenios.length === 0" class="empty-container">
+    <div class="empty-icon">📝</div>
+    <h3 class="empty-title">No hay convenios configurados</h3>
+    <p class="empty-message">Comience creando su primer convenio de recaudo</p>
+    <button class="btn-crear-primero" (click)="nuevoConvenio()">
+      <span class="btn-icon">➕</span>
+      <span class="btn-text">Crear Primer Convenio</span>
+    </button>
+  </div>
+
+  <!-- Convenios List -->
+  <div *ngIf="!isLoading && !error && convenios.length > 0" class="convenios-content">
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label">Total:</span>
+        <span class="stat-value">{{ totalRegistros }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Página:</span>
+        <span class="stat-value">{{ paginaActual }} de {{ totalPaginas }}</span>
+      </div>
+    </div>
+
+    <!-- Convenios Grid -->
+    <div class="convenios-grid">
+      <div 
+        *ngFor="let convenio of convenios; trackBy: trackByConvenio" 
+        class="convenio-card">
+        
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="convenio-info">
+            <h3 class="convenio-nombre">{{ convenio.nombre || 'Convenio #' + convenio.id }}</h3>
+            <span class="convenio-fecha">{{ convenio.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="convenio-status" [class]="getStatusClass(convenio.estado)">
+            {{ convenio.estado || 'Activo' }}
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="convenio-details">
+            <div class="detail-item" *ngIf="convenio.recaudo">
+              <span class="detail-label">Recaudo:</span>
+              <span class="detail-value">{{ convenio.recaudo.nombre }}</span>
+            </div>
+            <div class="detail-item" *ngIf="convenio.ambitos">
+              <span class="detail-label">Ámbitos:</span>
+              <span class="detail-value">{{ convenio.ambitos.length }} configurados</span>
+            </div>
+            <div class="detail-item" *ngIf="convenio.excepciones">
+              <span class="detail-label">Excepciones:</span>
+              <span class="detail-value">{{ convenio.excepciones.length }} configuradas</span>
+            </div>
+            <div class="detail-item" *ngIf="convenio.programas">
+              <span class="detail-label">Programas:</span>
+              <span class="detail-value">{{ convenio.programas.length }} configurados</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="card-actions">
+          <button class="btn-action btn-ver" (click)="verDetalles(convenio)">
+            <span class="btn-icon">👁️</span>
+            <span class="btn-text">Ver</span>
+          </button>
+          <button class="btn-action btn-editar" (click)="editarConvenio(convenio)">
+            <span class="btn-icon">✏️</span>
+            <span class="btn-text">Editar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPaginas > 1">
+      <div class="pagination">
+        <button 
+          class="page-btn"
+          [disabled]="paginaActual === 1"
+          (click)="paginaAnterior()">
+          ← Anterior
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let pagina of getPaginasVisibles()"
+            class="page-number"
+            [class.active]="pagina === paginaActual"
+            (click)="irAPagina(pagina)">
+            {{ pagina }}
+          </button>
+        </div>
+        
+        <button 
+          class="page-btn"
+          [disabled]="paginaActual === totalPaginas"
+          (click)="paginaSiguiente()">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
