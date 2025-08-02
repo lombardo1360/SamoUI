@@ -106,12 +106,39 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
         }
 
         if (data.programasData) {
-          this.programas = data.programasData.map((programa: any) => ({
+          console.log('🔍 Datos de programas recibidos:', data.programasData);
+          
+          let programasArray: any[] = [];
+          
+          // Verificar si es una respuesta API con estructura { codigo, mensaje, datos }
+          if (data.programasData.codigo && data.programasData.datos) {
+            console.log('📋 Respuesta API de programas:', data.programasData);
+            if (data.programasData.codigo === 200 && Array.isArray(data.programasData.datos)) {
+              programasArray = data.programasData.datos;
+            } else {
+              console.error('❌ Error en respuesta de programas:', data.programasData.mensaje);
+              return;
+            }
+          } else if (Array.isArray(data.programasData)) {
+            // Si es directamente un array (como parece ser tu caso)
+            programasArray = data.programasData;
+          } else {
+            console.error('❌ Formato de datos de programas no reconocido:', data.programasData);
+            return;
+          }
+          
+          this.programas = programasArray.map((programa: any) => ({
             id: programa.id,
-            name: programa.name,
-            selected: programa.selected || false
+            name: programa.nombre, // Usar 'nombre' del API
+            orden: null, // Agregar propiedades requeridas por DatoSeleccionado
+            equivalente: null,
+            selected: programa.seleccionado || false // Usar 'seleccionado' del API
           }));
-          console.log('✅ Programas cargados:', this.programas);
+          
+          console.log('✅ Programas procesados:', this.programas);
+          console.log('🔢 Cantidad de programas:', this.programas.length);
+        } else {
+          console.warn('⚠️ No se recibieron datos de programas');
         }
       },
       error: (error) => {

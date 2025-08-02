@@ -94,15 +94,6 @@
 
     <!-- Tabla de Convenios -->
     <div *ngIf="!isLoading && !error" class="table-container">
-      <div class="table-header">
-        <div class="table-actions">
-          <button class="add-button" (click)="mostrarFormulario()">
-            <span class="button-icon">➕</span>
-            <span class="button-text">Nuevo Convenio</span>
-          </button>
-        </div>
-      </div>
-
       <div class="table-content">
         <table class="convenios-table">
           <thead>
@@ -362,6 +353,28 @@
           </div>
 
           <div class="options-grid">
+            <!-- Debug info -->
+            <div *ngIf="programas.length === 0" class="debug-info" style="grid-column: 1/-1; padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 10px;">
+              <p><strong>🔍 Debug Info:</strong></p>
+              <p>• Programas array length: {{ programas.length }}</p>
+              <p>• Is loading: {{ isLoading }}</p>
+              <p>• Has error: {{ !!error }}</p>
+              <p>• Show formulario: {{ showFormulario }}</p>
+            </div>
+            
+            <!-- Mostrar loading mientras se cargan los programas -->
+            <div *ngIf="isLoading" class="loading-state" style="grid-column: 1/-1;">
+              <div class="loading-spinner"></div>
+              <p>Cargando programas de convenio...</p>
+            </div>
+            
+            <!-- Mostrar mensaje si no hay programas disponibles -->
+            <div *ngIf="!isLoading && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
+              <p>No hay programas de convenio disponibles</p>
+              <small>Verifique la conexión o contacte al administrador</small>
+            </div>
+            
+            <!-- Mostrar programas si están disponibles -->
             <label 
               *ngFor="let programa of programas; trackBy: trackByProgramaId" 
               class="option-card"
