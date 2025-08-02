@@ -116,7 +116,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
             if (data.programasData.codigo === 200 && Array.isArray(data.programasData.datos)) {
               programasArray = data.programasData.datos;
             } else {
-              console.error('❌ Error en respuesta de programas:', data.programasData.mensaje);
               return;
             }
           } else if (Array.isArray(data.programasData)) {
