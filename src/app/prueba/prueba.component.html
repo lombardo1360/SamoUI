@@ -1,0 +1,113 @@
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header align-items-center d-flex">
+            <h4 class="card-title mb-0 flex-grow-1">
+                <li class="p-2 border-bottom zoom" style="list-style: none;">
+                    <button class="btn btn-outline-warning mb-2" data-bs-toggle="tooltip" title="Nuevo Registro">
+                        <i class="fa fa-plus-square fa-2x"></i>
+                    </button>
+
+                    <button class="btn btn-outline-success mb-2" data-bs-toggle="tooltip" title="Guardar">
+                        <i class="fa fa-floppy-o fa-2x"></i>
+                    </button>
+
+                    <button class="btn btn-outline-danger mb-2" data-bs-toggle="tooltip" title="Anular Registro">
+                        <i class="fa fa-ban fa-2x"></i>
+                    </button>
+
+                    <!-- Botón de búsqueda deshabilitado (comentado como en el original) -->
+                    <!--
+          <button class="btn btn-outline-primary mb-2" data-bs-toggle="tooltip" title="Buscar Registro" (click)="buscar()">
+            <i class="fa fa-search fa-2x"></i>
+          </button>
+          -->
+                </li>
+            </h4>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div id="customerList">
+                        <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+                            <table class="table table-hover table-sm w-100 dataTable" id="customerTable">
+                                <thead class="thead-light outline-badge-primary">
+                                    <tr>
+                                        <th>Código Convenio</th>
+                                        <th>Nombre Convenio</th>
+                                        <th>Tipo Convenio</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CV-0001</td>
+                                        <td>Convenio Salud Integral</td>
+                                        <td>General</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Editar</button>
+                                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>CV-0002</td>
+                                        <td>Convenio Educativo</td>
+                                        <td>Preferente</td>
+                                        <td><span class="badge bg-secondary">Inactivo</span></td>
+                                        <td>
+                                            <button class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                                                    class="las la-user-alt"></i></button>
+                                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>CV-0003</td>
+                                        <td>Convenio Transporte</td>
+                                        <td>Corporativo</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Editar</button>
+                                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>CV-0004</td>
+                                        <td>Convenio Alimentación</td>
+                                        <td>Promoción</td>
+                                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Editar</button>
+                                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>CV-0005</td>
+                                        <td>Convenio Tecnología</td>
+                                        <td>Tecnológico</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Editar</button>
+                                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
