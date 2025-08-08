@@ -1,0 +1,16 @@
+
+
+@if (loadingService.loading$ | async) {
+ <div class="loading-overlay" *ngIf="loadingService.loading$ | async">
+  <div class="se-pre-con">
+    <div class="loader">
+     
+    </div>
+    
+  </div>
+
+   <img class="spinner"  src="asset/dist/Img/loadingSamo.gif" alt="Cargando...">
+</div>
+
+
+}

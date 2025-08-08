@@ -1,57 +1,70 @@
 <div class="convenio-recaudo-container">
-  <!-- Header -->
-  <div class="header-section">
-    <h1 class="main-title">
-      <span *ngIf="!showFormulario">📋 Convenios Configurados</span>
-      <span *ngIf="showFormulario">➕ Nuevo Convenio de Recaudo</span>
-    </h1>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <h4 class="mb-sm-0 btn-outline-primary"> <span *ngIf="!showFormulario">Convenios Configurados</span>
+              <span *ngIf="showFormulario">Nuevo Convenio de Recaudo</span>
+            </h4>
+          </ol>
+        </div>
+
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a>Configurar Recaudos</a></li>
+            <li class="breadcrumb-item active">Gestiona Recaudos</li>
+          </ol>
+        </div>
+      </div>
+    </div>
   </div>
+  <!-- Header -->
+
 
   <!-- Botones de Acción Globales -->
-  <div class="global-action-section">
-    <div class="action-buttons">
-      <!-- Botón de Añadir -->
-      <button 
-        class="action-button add-button"
-        [disabled]="showFormulario"
-        (click)="mostrarFormulario()">
-        <span class="button-content">
-          <span class="button-icon">➕</span>
-          <span class="button-text">Añadir</span>
-        </span>
-      </button>
 
-      <!-- Botón de Guardar -->
-      <button 
-        class="action-button save-button"
-        [disabled]="!canSave()"
-        [class.loading]="isSaving"
-        (click)="guardarConfiguracion()">
-        
-        <span *ngIf="!isSaving" class="button-content">
-          <span class="button-icon">💾</span>
-          <span class="button-text">Guardar</span>
-        </span>
-        
-        <span *ngIf="isSaving" class="button-content loading-content">
-          <span class="loading-spinner"></span>
-          <span class="button-text">Guardando...</span>
-        </span>
-      </button>
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1">
+          <li class="p-2 border-bottom zoom" style="list-style: none;">
+            <button class="btn btn-outline-warning mb-2" data-bs-toggle="tooltip" [disabled]="showFormulario"
+              (click)="mostrarFormulario()" title="Nuevo Registro">
+              <i class="fa fa-plus-square fa-2x"></i>
+            </button>
 
-      <!-- Botón de Cancelar -->
-      <button 
-        class="action-button cancel-button"
-        [disabled]="!showFormulario && !hasSelections()"
-        (click)="cancelarOperacion()">
-        <span class="button-content">
-          <span class="button-icon">❌</span>
-          <span class="button-text">Cancelar</span>
-        </span>
-      </button>
+            <button class="btn btn-outline-success mb-2" data-bs-toggle="tooltip" [disabled]="!canSave()"
+              [class.loading]="isSaving" (click)="guardarConfiguracion()" title="Guardar">
+              <i class="fa fa-floppy-o fa-2x"></i>
+            </button>
+
+            <button class="btn btn-outline-danger mb-2" data-bs-toggle="tooltip" title="Anular Registro "
+              [disabled]="!showFormulario && !hasSelections()" (click)="cancelarOperacion()">
+              <i class="fa fa-ban fa-2x"></i>
+            </button>
+
+            <!-- Botón de búsqueda deshabilitado (comentado como en el original) -->
+            <!--
+          <button class="btn btn-outline-primary mb-2" data-bs-toggle="tooltip" title="Buscar Registro" (click)="buscar()">
+            <i class="fa fa-search fa-2x"></i>
+          </button>
+          -->
+          </li>
+        </h4>
+      </div>
     </div>
+  </div>
+
+
+  <div class="global-action-section">
+
 
     <!-- Messages Section -->
+
+
+
     <div class="messages-section">
       <!-- Mensaje de éxito -->
       <div *ngIf="saveSuccess" class="success-message">
@@ -61,12 +74,23 @@
 
       <!-- Mensaje de error específico para guardar -->
       <div *ngIf="error && !isLoading" class="error-message-inline">
-        <span class="error-icon">⚠️</span>
-        <span class="error-text">{{ error }}</span>
+        <span class="error-icon"><i class="ri-error-warning-line me-3 align-middle"></i></span>
+
+        <strong>
+          {{ error }}
+        </strong>
+      </div>
+
+      <div *ngIf="error && !(loading$ | async)" class="error-message-inline">
+        <span class="error-icon"><i class="ri-error-warning-line me-3 align-middle"></i></span>
+        <strong>
+          {{ error }}
+        </strong>
       </div>
 
       <!-- Información de ayuda para la lista -->
-      <div class="help-info" *ngIf="!showFormulario && conveniosConfigurados.length === 0 && !isLoading && !error">
+      <div class="help-info"
+        *ngIf="!showFormulario && conveniosConfigurados.length === 0 && !(loading$ | async) && !error">
         <span class="help-icon">📝</span>
         <span class="help-text">No hay convenios configurados. Haga clic en "Guardar" para crear uno nuevo.</span>
       </div>
@@ -74,26 +98,51 @@
   </div>
 
   <!-- Lista de Convenios Configurados -->
+
+
   <div *ngIf="!showFormulario" class="lista-container">
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-section">
-      <div class="loading-spinner"></div>
+    <app-loading></app-loading>
+
+    <div *ngIf="loading$ | async" class="loading-section">
+
       <p class="loading-text">Cargando convenios configurados...</p>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="error && !isLoading" class="error-section">
-      <div class="error-card">
-        <span class="error-icon">❌</span>
-        <p class="error-text">{{ error }}</p>
-        <button class="retry-button" (click)="loadConveniosConfigurados()">
-          Reintentar
-        </button>
+    <div *ngIf="error && !(loading$ | async)" class="col-lg-12">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mt-3">
+              <div class="card card-body text-center">
+                <div class="text-center">
+
+                  <span>
+                    <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+
+                      <strong>
+                        {{ error }}
+                      </strong>
+                      <div class="mt-2">
+                        <button class="btn btn-danger btn-sm" (click)="loadConveniosConfigurados()">
+                          Reintentar
+                        </button>
+                      </div>
+                      <i class="ri-error-warning-line me-3 align-middle"></i>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
+
     <!-- Tabla de Convenios -->
-    <div *ngIf="!isLoading && !error" class="table-container">
+    <div *ngIf="!(loading$ | async) && !error" class="table-container">
       <div class="table-content">
         <table class="convenios-table">
           <thead>
@@ -118,15 +167,16 @@
                 <span class="status-badge" [class.active]="convenio.activo" [class.inactive]="!convenio.activo">
                   {{ convenio.activo ? 'Activo' : 'Inactivo' }}
                 </span>
+                
               </td>
               <td>
                 <div class="action-buttons">
-                  <button class="edit-button" title="Editar">
-                    <span>✏️</span>
-                  </button>
-                  <button class="delete-button" title="Eliminar">
-                    <span>🗑️</span>
-                  </button>
+                  <button class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                      class="las la-user-alt"></i></button>
+                  <a id="Main_DetalleEspecialidad_btn_cambiarEstado_202" data-toggle="tooltip" data-bs-trigger="hover"
+                    data-bs-placement="top" class="btn btn-outline-danger btn-icon waves-effect waves-light" title=""
+                    href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
+                    data-original-title="Inactivar"><i class="las la-exclamation-circle"></i></a>
                 </div>
               </td>
             </tr>
@@ -148,24 +198,16 @@
       <!-- Paginación -->
       <div *ngIf="totalPaginas > 1" class="pagination-container">
         <div class="pagination">
-          <button 
-            class="pagination-button"
-            [disabled]="paginaActual === 1"
-            (click)="cambiarPagina(paginaActual - 1)">
+          <button class="pagination-button" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
             ‹ Anterior
           </button>
-          
-          <button 
-            *ngFor="let pagina of getPaginas()"
-            class="pagination-button"
-            [class.active]="pagina === paginaActual"
+
+          <button *ngFor="let pagina of getPaginas()" class="pagination-button" [class.active]="pagina === paginaActual"
             (click)="cambiarPagina(pagina)">
             {{ pagina }}
           </button>
-          
-          <button 
-            class="pagination-button"
-            [disabled]="paginaActual === totalPaginas"
+
+          <button class="pagination-button" [disabled]="paginaActual === totalPaginas"
             (click)="cambiarPagina(paginaActual + 1)">
             Siguiente ›
           </button>
@@ -177,21 +219,23 @@
   <div *ngIf="showFormulario" class="formulario-container">
 
     <!-- Estado de carga -->
-    <div *ngIf="isLoading" class="loading-state">
+    <app-loading *ngIf="loading$ | async"></app-loading>
+    <!--             
+    <div *ngIf="loading$ | async" class="loading-state">
       <div class="spinner"></div>
       <p>Cargando recaudos, ámbitos, excepciones y programas...</p>
-    </div>
+    </div> -->
 
     <!-- Estado de error -->
-    <div *ngIf="error && !isLoading" class="error-state">
+    <div *ngIf="error && !(loading$ | async)" class="error-state">
       <div class="error-icon">⚠️</div>
       <p class="error-message">{{ error }}</p>
       <button class="retry-button" (click)="retry()">Reintentar</button>
     </div>
 
     <!-- Main Grid Layout -->
-    <div *ngIf="!isLoading && !error" class="main-grid">
-      
+    <div *ngIf="!(loading$ | async) && !error" class="main-grid">
+
       <!-- Sidebar con Recaudos -->
       <div class="sidebar-section">
         <div class="section-card">
@@ -199,18 +243,13 @@
             <h2 class="card-title">Recaudos Disponibles</h2>
             <span class="badge">{{ recaudos.length }}</span>
           </div>
-          
+
           <div class="dropdown-wrapper">
-            <select 
-              id="recaudos-select"
-              class="modern-select"
-              (change)="onRecaudoSelect($event)"
+            <select id="recaudos-select" class="modern-select" (change)="onRecaudoSelect($event)"
               [disabled]="recaudos.length === 0">
-              
+
               <option value="">Seleccionar recaudo...</option>
-              <option 
-                *ngFor="let recaudo of recaudos; let i = index" 
-                [value]="recaudo.id">
+              <option *ngFor="let recaudo of recaudos; let i = index" [value]="recaudo.id">
                 {{ recaudo.name }}
               </option>
             </select>
@@ -220,7 +259,8 @@
           <div *ngIf="selectedRecaudo" class="selected-recaudo-info">
             <div class="info-header">
               <h3>{{ selectedRecaudo.name || selectedRecaudo.nombre }}</h3>
-              <span class="status-badge" [class.active]="selectedRecaudo.estado" [class.inactive]="!selectedRecaudo.estado">
+              <span class="status-badge" [class.active]="selectedRecaudo.estado"
+                [class.inactive]="!selectedRecaudo.estado">
                 {{ selectedRecaudo.estado ? 'Activo' : 'Inactivo' }}
               </span>
             </div>
@@ -240,7 +280,7 @@
 
       <!-- Content Area con Cards -->
       <div class="content-section">
-        
+
         <!-- Card de Ámbitos -->
         <div class="content-card ambitos-card">
           <div class="card-header">
@@ -250,12 +290,9 @@
                 {{ getSelectedAmbitosCount() }}/{{ ambitos.length }}
               </div>
             </div>
-            
+
             <label class="toggle-all">
-              <input 
-                type="checkbox" 
-                [checked]="isAllAmbitosSelected()"
-                [class.indeterminate]="isAmbitosIndeterminate()"
+              <input type="checkbox" [checked]="isAllAmbitosSelected()" [class.indeterminate]="isAmbitosIndeterminate()"
                 (change)="toggleSelectAllAmbitos()">
               <span class="toggle-checkmark"></span>
               <span class="toggle-text">Seleccionar todos</span>
@@ -263,14 +300,9 @@
           </div>
 
           <div class="options-grid">
-            <label 
-              *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" 
-              class="option-card"
+            <label *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" class="option-card"
               [class.selected]="ambito.selected">
-              <input 
-                type="checkbox" 
-                [checked]="ambito.selected"
-                (change)="onAmbitoSelectionChange(ambito)">
+              <input type="checkbox" [checked]="ambito.selected" (change)="onAmbitoSelectionChange(ambito)">
               <div class="option-content">
                 <span class="option-checkmark"></span>
                 <span class="option-text">{{ ambito.name }}</span>
@@ -295,27 +327,19 @@
                 {{ getSelectedExcepcionesCount() }}/{{ excepciones.length }}
               </div>
             </div>
-            
+
             <label class="toggle-all">
-              <input 
-                type="checkbox" 
-                [checked]="isAllExcepcionesSelected()"
-                [class.indeterminate]="isExcepcionesIndeterminate()"
-                (change)="toggleSelectAllExcepciones()">
+              <input type="checkbox" [checked]="isAllExcepcionesSelected()"
+                [class.indeterminate]="isExcepcionesIndeterminate()" (change)="toggleSelectAllExcepciones()">
               <span class="toggle-checkmark"></span>
               <span class="toggle-text">Seleccionar todas</span>
             </label>
           </div>
 
           <div class="options-grid">
-            <label 
-              *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId" 
-              class="option-card"
+            <label *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId" class="option-card"
               [class.selected]="excepcion.selected">
-              <input 
-                type="checkbox" 
-                [checked]="excepcion.selected"
-                (change)="onExcepcionSelectionChange(excepcion)">
+              <input type="checkbox" [checked]="excepcion.selected" (change)="onExcepcionSelectionChange(excepcion)">
               <div class="option-content">
                 <span class="option-checkmark"></span>
                 <span class="option-text">{{ excepcion.name }}</span>
@@ -340,13 +364,10 @@
                 {{ getSelectedProgramasCount() }}/{{ programas.length }}
               </div>
             </div>
-            
+
             <label class="toggle-all">
-              <input 
-                type="checkbox" 
-                [checked]="isAllProgramasSelected()"
-                [class.indeterminate]="isProgramasIndeterminate()"
-                (change)="toggleSelectAllProgramas()">
+              <input type="checkbox" [checked]="isAllProgramasSelected()"
+                [class.indeterminate]="isProgramasIndeterminate()" (change)="toggleSelectAllProgramas()">
               <span class="toggle-checkmark"></span>
               <span class="toggle-text">Seleccionar todos</span>
             </label>
@@ -354,35 +375,31 @@
 
           <div class="options-grid">
             <!-- Debug info -->
-            <div *ngIf="programas.length === 0" class="debug-info" style="grid-column: 1/-1; padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 10px;">
+            <div *ngIf="programas.length === 0" class="debug-info"
+              style="grid-column: 1/-1; padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 10px;">
               <p><strong>🔍 Debug Info:</strong></p>
               <p>• Programas array length: {{ programas.length }}</p>
-              <p>• Is loading: {{ isLoading }}</p>
+              <p>• Is loading: {{ loading$ | async }}</p>
               <p>• Has error: {{ !!error }}</p>
               <p>• Show formulario: {{ showFormulario }}</p>
             </div>
-            
+
             <!-- Mostrar loading mientras se cargan los programas -->
-            <div *ngIf="isLoading" class="loading-state" style="grid-column: 1/-1;">
+            <div *ngIf="loading$ | async" class="loading-state" style="grid-column: 1/-1;">
               <div class="loading-spinner"></div>
               <p>Cargando programas de convenio...</p>
             </div>
-            
+
             <!-- Mostrar mensaje si no hay programas disponibles -->
-            <div *ngIf="!isLoading && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
+            <div *ngIf="!(loading$ | async) && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
               <p>No hay programas de convenio disponibles</p>
               <small>Verifique la conexión o contacte al administrador</small>
             </div>
-            
+
             <!-- Mostrar programas si están disponibles -->
-            <label 
-              *ngFor="let programa of programas; trackBy: trackByProgramaId" 
-              class="option-card"
+            <label *ngFor="let programa of programas; trackBy: trackByProgramaId" class="option-card"
               [class.selected]="programa.selected">
-              <input 
-                type="checkbox" 
-                [checked]="programa.selected"
-                (change)="onProgramaSelectionChange(programa)">
+              <input type="checkbox" [checked]="programa.selected" (change)="onProgramaSelectionChange(programa)">
               <div class="option-content">
                 <span class="option-checkmark"></span>
                 <span class="option-text">{{ programa.name }}</span>
@@ -401,7 +418,8 @@
     </div>
 
     <!-- Estado sin datos -->
-    <div *ngIf="!isLoading && !error && recaudos.length === 0" class="empty-state">
+
+    <div *ngIf="!(loading$ | async) && !error && recaudos.length === 0" class="empty-state">
       <div class="empty-icon">📋</div>
       <h3>No hay recaudos disponibles</h3>
       <p>No se encontraron recaudos para mostrar en este momento.</p>

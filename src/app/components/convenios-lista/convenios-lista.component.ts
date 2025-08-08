@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { RecaudosService } from '../../services/recaudos.service';
 import { AuthService } from '../../services/auth.service';
+import { LoadingComponent } from '../loading/loading.component';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-convenios-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingComponent],
   templateUrl: './convenios-lista.component.html',
   styleUrl: './convenios-lista.component.scss'
 })
@@ -28,7 +30,8 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
   constructor(
     private recaudosService: RecaudosService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+   private loading : LoadingService,
   ) {}
 
   ngOnInit(): void {
@@ -44,6 +47,7 @@ export class ConveniosListaComponent implements OnInit, OnDestroy {
    * Cargar lista de convenios configurados
    */
   cargarConvenios(): void {
+    
     this.isLoading = true;
     this.error = null;
 

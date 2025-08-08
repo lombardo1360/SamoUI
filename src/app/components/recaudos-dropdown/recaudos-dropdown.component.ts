@@ -5,10 +5,13 @@ import { Subject, takeUntil, combineLatest, switchMap, forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { RecaudosService } from '../../services/recaudos.service';
 import { RecaudoOperacion, DatoTabla, DatoSeleccionado, ConvenioRecaudoConfigurado, ConvenioRecaudoConfigurationList } from '../../interfaces/api.interface';
+import { LoadingService } from '../../services/loading.service';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'app-recaudos-dropdown',
-  imports: [CommonModule, FormsModule],
+ 
+  imports: [CommonModule, FormsModule,LoadingComponent],
   templateUrl: './recaudos-dropdown.component.html',
   styleUrl: './recaudos-dropdown.component.scss'
 })
@@ -34,13 +37,17 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
   isSaving = false;
   error: string | null = null;
   saveSuccess = false;
+  loading$!: typeof this.loadingService.loading$;
+
+ 
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
-    private recaudosService: RecaudosService
-  ) {}
+    private recaudosService: RecaudosService,
+    private loadingService: LoadingService
+  ) {this.loading$ = this.loadingService.loading$;}
 
   ngOnInit(): void {
     this.loadConveniosConfigurados();
@@ -61,7 +68,8 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
       switchMap(([token, operacionId]) => {
         if (token && operacionId) {
           console.log('Token y OperacionId disponibles, cargando datos...');
-          this.isLoading = true;
+          this.loadingService.hide();
+          //this.isLoading = true;
           this.error = null;
           
           // Cargar recaudos, ámbitos, excepciones y programas en paralelo
@@ -78,7 +86,8 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (data: any) => {
-        this.isLoading = false;
+        this.loadingService.hide();
+        //this.isLoading = false;
         
         if (data.recaudosResponse) {
           if (data.recaudosResponse.codigo === 200) {
@@ -141,7 +150,8 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        this.isLoading = false;
+        this.loadingService.hide();
+        //this.isLoading = false;
         this.error = 'Error de conexión al cargar recaudos';
         console.error('Error al cargar recaudos:', error);
       }
@@ -340,11 +350,13 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
     this.saveSuccess = false;
 
     // Enviar configuración
+    this.loadingService.show();
     this.recaudosService.configurarConvenioRecaudo(configuracion)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.isSaving = false;
+          this.loadingService.hide();
+          //this.isSaving = false;
           this.saveSuccess = true;
           console.log('✅ Configuración guardada exitosamente:', response);
           
@@ -355,7 +367,8 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
           }, 2000);
         },
         error: (error) => {
-          this.isSaving = false;
+          this.loadingService.hide();
+          //this.isSaving = false;
           this.error = 'Error al guardar la configuración. Intente nuevamente.';
           console.error('❌ Error al guardar configuración:', error);
         }
@@ -418,14 +431,16 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
    * Cargar lista de convenios configurados
    */
   loadConveniosConfigurados(): void {
-    this.isLoading = true;
+    this.loadingService.show();
+    //this.isLoading = true;
     this.error = null;
 
     this.recaudosService.getConvenioRecaudoConfigurados(this.paginaActual, this.tamanoPagina)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
+          this.loadingService.hide();
+         // this.isLoading = false;
           if (response.codigo === 200) {
             this.conveniosConfigurados = response.datos.elementos;
             this.totalPaginas = response.datos.totalPaginas;
@@ -435,7 +450,8 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          this.isLoading = false;
+          this.loadingService.hide();
+         // this.isLoading = false;
           this.error = 'Error al cargar los convenios configurados. Intente nuevamente.';
           console.error('❌ Error al cargar convenios configurados:', error);
         }
