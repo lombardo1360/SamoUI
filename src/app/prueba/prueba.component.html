@@ -115,3 +115,172 @@
 <app-loading></app-loading>
 
 <button (click)="cargarDatos()">Cargar datos</button>
+
+<div id="Main_PanelFiltros">
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1 btn-outline-primary"><strong>Filtros</strong></h4>
+
+            </div>
+            <div class="card-body">
+
+                <div class="row" data-select2-id="6">
+
+
+
+
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="txtNombre">Nombre Convenio:</label>
+                            <input name="ctl00$Main$txtNombre" type="text"
+                                onchange="javascript:setTimeout('__doPostBack(\'ctl00$Main$txtNombre\',\'\')', 0)"
+                                onkeypress="if (WebForm_TextBoxKeyHandler(event) == false) return false;"
+                                id="Main_txtNombre" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-12" data-select2-id="5">
+                        <div class="form-group" data-select2-id="4">
+                            <label for="ddlTipo">Tipo Convenio:</label>
+                            <select name="ctl00$Main$ddl_TipoConvenio"
+                                onchange="javascript:setTimeout('__doPostBack(\'ctl00$Main$ddl_TipoConvenio\',\'\')', 0)"
+                                id="Main_ddl_TipoConvenio"
+                                class="form-control select2 w-100 select2-container select2-container--bootstrap4 select2-container--below select2-hidden-accessible"
+                                style="width: 100%" data-select2-id="Main_ddl_TipoConvenio" tabindex="-1"
+                                aria-hidden="true">
+                                <option selected="selected" value="0" data-select2-id="2">Seleccione una opción</option>
+                                <option value="389" data-select2-id="15">Dependiente con complementariedad</option>
+                                <option value="388" data-select2-id="16">Dependiente sin complementariedad</option>
+                                <option value="387" data-select2-id="17">Independiente</option>
+                                <option value="390" data-select2-id="18">Mixto</option>
+
+                            </select><span
+                                class="select2 select2-container select2-container--bootstrap4 select2-container--focus select2-container--above"
+                                dir="ltr" data-select2-id="1" style="width: 100%;"><span class="selection"><span
+                                        class="select2-selection select2-selection--single" role="combobox"
+                                        aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false"
+                                        aria-labelledby="select2-Main_ddl_TipoConvenio-container"><span
+                                            class="select2-selection__rendered"
+                                            id="select2-Main_ddl_TipoConvenio-container" role="textbox"
+                                            aria-readonly="true" title="Seleccione una opción">Seleccione una
+                                            opción</span><span class="select2-selection__arrow" role="presentation"><b
+                                                role="presentation"></b></span></span></span><span
+                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div _ngcontent-ng-c3869273254="" class="table-container">
+    <div _ngcontent-ng-c3869273254="" class="table-content">
+        <table _ngcontent-ng-c3869273254="" class="convenios-table">
+            <thead _ngcontent-ng-c3869273254="">
+                <tr _ngcontent-ng-c3869273254="">
+                    <th _ngcontent-ng-c3869273254="">ID</th>
+                    <th _ngcontent-ng-c3869273254="">Convenio ID</th>
+                    <th _ngcontent-ng-c3869273254="">Nivel Recaudo ID</th>
+                    <th _ngcontent-ng-c3869273254="">Fecha Creación</th>
+                    <th _ngcontent-ng-c3869273254="">Usuario</th>
+                    <th _ngcontent-ng-c3869273254="">Estado</th>
+                    <th _ngcontent-ng-c3869273254="">Acciones</th>
+                </tr>
+            </thead>
+            <tbody _ngcontent-ng-c3869273254="">
+                <tr _ngcontent-ng-c3869273254="" class="table-row">
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">25/07/2025, 11:58</td>
+                    <td _ngcontent-ng-c3869273254="">3</td>
+                    <td _ngcontent-ng-c3869273254=""><span _ngcontent-ng-c3869273254="" class="status-badge active">
+                            Activo </span></td>
+                    <td _ngcontent-ng-c3869273254="">
+                        <div _ngcontent-ng-c3869273254="" class="action-buttons"><button _ngcontent-ng-c3869273254=""
+                                type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                                class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-user-alt"></i></button><a
+                                _ngcontent-ng-c3869273254="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Inactivar"
+                                href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
+                                class="btn btn-outline-danger btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-exclamation-circle"></i></a></div>
+                    </td>
+                </tr>
+                <tr _ngcontent-ng-c3869273254="" class="table-row">
+                    <td _ngcontent-ng-c3869273254="">3</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">25/07/2025, 12:36</td>
+                    <td _ngcontent-ng-c3869273254="">3</td>
+                    <td _ngcontent-ng-c3869273254=""><span _ngcontent-ng-c3869273254="" class="status-badge active">
+                            Activo </span></td>
+                    <td _ngcontent-ng-c3869273254="">
+                        <div _ngcontent-ng-c3869273254="" class="action-buttons"><button _ngcontent-ng-c3869273254=""
+                                type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                                class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-user-alt"></i></button><a
+                                _ngcontent-ng-c3869273254="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Inactivar"
+                                href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
+                                class="btn btn-outline-danger btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-exclamation-circle"></i></a></div>
+                    </td>
+                </tr>
+                <tr _ngcontent-ng-c3869273254="" class="table-row">
+                    <td _ngcontent-ng-c3869273254="">4</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">08/08/2025, 11:12</td>
+                    <td _ngcontent-ng-c3869273254="">3</td>
+                    <td _ngcontent-ng-c3869273254=""><span _ngcontent-ng-c3869273254="" class="status-badge active">
+                            Activo </span></td>
+                    <td _ngcontent-ng-c3869273254="">
+                        <div _ngcontent-ng-c3869273254="" class="action-buttons"><button _ngcontent-ng-c3869273254=""
+                                type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                                class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-user-alt"></i></button><a
+                                _ngcontent-ng-c3869273254="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Inactivar"
+                                href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
+                                class="btn btn-outline-danger btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-exclamation-circle"></i></a></div>
+                    </td>
+                </tr>
+                <tr _ngcontent-ng-c3869273254="" class="table-row">
+                    <td _ngcontent-ng-c3869273254="">5</td>
+                    <td _ngcontent-ng-c3869273254="">2</td>
+                    <td _ngcontent-ng-c3869273254="">1</td>
+                    <td _ngcontent-ng-c3869273254="">09/08/2025, 12:50</td>
+                    <td _ngcontent-ng-c3869273254="">3</td>
+                    <td _ngcontent-ng-c3869273254=""><span _ngcontent-ng-c3869273254="" class="status-badge active">
+                            Activo </span></td>
+                    <td _ngcontent-ng-c3869273254="">
+                        <div _ngcontent-ng-c3869273254="" class="action-buttons"><button _ngcontent-ng-c3869273254=""
+                                type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                                class="btn btn-outline-info btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-user-alt"></i></button><a
+                                _ngcontent-ng-c3869273254="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Inactivar"
+                                href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
+                                class="btn btn-outline-danger btn-icon waves-effect waves-light"><i
+                                    _ngcontent-ng-c3869273254="" class="las la-exclamation-circle"></i></a></div>
+                    </td>
+                </tr><!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+            </tbody>
+        </table><!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+    </div><!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+</div>

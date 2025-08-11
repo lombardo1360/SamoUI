@@ -16,6 +16,15 @@ import { LoadingComponent } from '../loading/loading.component';
   styleUrl: './recaudos-dropdown.component.scss'
 })
 export class RecaudosDropdownComponent implements OnInit, OnDestroy {
+
+   ngAfterViewInit(): void {
+    // Inicializa los tooltips de Bootstrap
+    const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+      // @ts-ignore
+      new window.bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  }
   // Control de vista
   showFormulario = false;
   

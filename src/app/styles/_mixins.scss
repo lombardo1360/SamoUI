@@ -68,13 +68,13 @@
 // Card base
 @mixin card-base {
   background: white;
-  border-radius: $radius-xl;
+  border-radius: $radius-md;
   box-shadow: $shadow-md;
   border: 1px solid $secondary-200;
   transition: all $transition-normal;
   
   &:hover {
-    box-shadow: $shadow-lg;
+    box-shadow: $shadow-md;
     transform: translateY(-2px);
   }
 }

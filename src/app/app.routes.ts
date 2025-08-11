@@ -7,6 +7,6 @@ import { PruebaComponent } from './prueba/prueba.component';
 export const routes: Routes = [
   { path: '', component: BienvenidaPage },
   { path: 'configuraRecaudo', component: ConfiguraRecaudoPage },
-  { path: 'configuraFacturacion', component: ConfiguraFacturacionPage },
+  { path: 'configuraFacturacion', component: PruebaComponent },
   { path: 'prueba', component: PruebaComponent }
 ];

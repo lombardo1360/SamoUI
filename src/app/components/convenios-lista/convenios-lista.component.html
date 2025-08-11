@@ -17,7 +17,7 @@
     </div>
   </div>
 
- 
+
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
@@ -60,10 +60,8 @@
 
     <!-- Convenios Grid -->
     <div class="convenios-grid">
-      <div 
-        *ngFor="let convenio of convenios; trackBy: trackByConvenio" 
-        class="convenio-card">
-        
+      <div *ngFor="let convenio of convenios; trackBy: trackByConvenio" class="convenio-card">
+
         <!-- Card Header -->
         <div class="card-header">
           <div class="convenio-info">
@@ -107,7 +105,7 @@
             <span class="btn-icon">✏️</span>
             <span class="btn-text">Editar</span>
           </button>
-          
+
         </div>
       </div>
     </div>
@@ -115,30 +113,83 @@
     <!-- Pagination -->
     <div class="pagination-container" *ngIf="totalPaginas > 1">
       <div class="pagination">
-        <button 
-          class="page-btn"
-          [disabled]="paginaActual === 1"
-          (click)="paginaAnterior()">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="paginaAnterior()">
           ← Anterior
         </button>
-        
+
         <div class="page-numbers">
-          <button 
-            *ngFor="let pagina of getPaginasVisibles()"
-            class="page-number"
-            [class.active]="pagina === paginaActual"
-            (click)="irAPagina(pagina)">
+          <button *ngFor="let pagina of getPaginasVisibles()" class="page-number"
+            [class.active]="pagina === paginaActual" (click)="irAPagina(pagina)">
             {{ pagina }}
           </button>
         </div>
-        
-        <button 
-          class="page-btn"
-          [disabled]="paginaActual === totalPaginas"
-          (click)="paginaSiguiente()">
+
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">
           Siguiente →
         </button>
       </div>
     </div>
   </div>
+</div>
+
+
+<div id="Main_PanelFiltros">
+
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1 btn-outline-primary"><strong>Filtros</strong></h4>
+
+      </div>
+      <div class="card-body">
+
+        <div class="row" data-select2-id="6">
+
+
+
+
+          <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+              <label for="txtNombre">Nombre Convenio:</label>
+              <input name="ctl00$Main$txtNombre" type="text"
+                onchange="javascript:setTimeout('__doPostBack(\'ctl00$Main$txtNombre\',\'\')', 0)"
+                onkeypress="if (WebForm_TextBoxKeyHandler(event) == false) return false;" id="Main_txtNombre"
+                class="form-control">
+            </div>
+          </div>
+
+          <div class="col-md-6 col-sm-12" data-select2-id="5">
+            <div class="form-group" data-select2-id="4">
+              <label for="ddlTipo">Tipo Convenio:</label>
+              <select name="ctl00$Main$ddl_TipoConvenio"
+                onchange="javascript:setTimeout('__doPostBack(\'ctl00$Main$ddl_TipoConvenio\',\'\')', 0)"
+                id="Main_ddl_TipoConvenio"
+                class="form-control select2 w-100 select2-container select2-container--bootstrap4 select2-container--below select2-hidden-accessible"
+                style="width: 100%" data-select2-id="Main_ddl_TipoConvenio" tabindex="-1" aria-hidden="true">
+                <option selected="selected" value="0" data-select2-id="2">Seleccione una opción</option>
+                <option value="389" data-select2-id="15">Dependiente con complementariedad</option>
+                <option value="388" data-select2-id="16">Dependiente sin complementariedad</option>
+                <option value="387" data-select2-id="17">Independiente</option>
+                <option value="390" data-select2-id="18">Mixto</option>
+
+              </select><span
+                class="select2 select2-container select2-container--bootstrap4 select2-container--focus select2-container--above"
+                dir="ltr" data-select2-id="1" style="width: 100%;"><span class="selection"><span
+                    class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true"
+                    aria-expanded="false" tabindex="0" aria-disabled="false"
+                    aria-labelledby="select2-Main_ddl_TipoConvenio-container"><span class="select2-selection__rendered"
+                      id="select2-Main_ddl_TipoConvenio-container" role="textbox" aria-readonly="true"
+                      title="Seleccione una opción">Seleccione una opción</span><span class="select2-selection__arrow"
+                      role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper"
+                  aria-hidden="true"></span></span>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
