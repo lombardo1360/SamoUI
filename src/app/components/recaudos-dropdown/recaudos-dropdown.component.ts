@@ -7,11 +7,13 @@ import { RecaudosService } from '../../services/recaudos.service';
 import { RecaudoOperacion, DatoTabla, DatoSeleccionado, ConvenioRecaudoConfigurado, ConvenioRecaudoConfigurationList } from '../../interfaces/api.interface';
 import { LoadingService } from '../../services/loading.service';
 import { LoadingComponent } from '../loading/loading.component';
+import { SelectModule } from 'primeng/select';
+
 
 @Component({
   selector: 'app-recaudos-dropdown',
  
-  imports: [CommonModule, FormsModule,LoadingComponent],
+  imports: [CommonModule, FormsModule,LoadingComponent, SelectModule],
   templateUrl: './recaudos-dropdown.component.html',
   styleUrl: './recaudos-dropdown.component.scss'
 })
@@ -167,10 +169,9 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  onRecaudoSelect(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const selectedId = parseInt(target.value);
-    
+  onRecaudoSelect(event: any): void {
+    // event.value contiene el id seleccionado
+    const selectedId = event.value;
     if (selectedId) {
       this.selectedRecaudo = this.recaudos.find(r => r.id === selectedId) || null;
       console.log('Recaudo seleccionado:', this.selectedRecaudo);

@@ -32,7 +32,9 @@
               }
             ],
             "styles": [
+               
               "src/styles.scss"
+              
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -96,6 +98,7 @@
               }
             ],
             "styles": [
+               
               "src/styles.scss"
             ],
             "scripts": []

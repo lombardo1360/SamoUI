@@ -25,7 +25,7 @@
 
   <!-- Botones de Acción Globales -->
 
-  
+
 
   <div class="col-lg-12">
     <div class="card">
@@ -106,13 +106,13 @@
     <!-- Loading State -->
     <app-loading></app-loading>
 
-    <div *ngIf="loading$ | async" class="loading-section">
+    <div *ngIf="isLoading" class="loading-section">
 
       <p class="loading-text">Cargando convenios configurados...</p>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="error && !(loading$ | async)" class="col-lg-12">
+    <div *ngIf="error && !isLoading" class="col-lg-12">
       <div class="card">
         <div class="row">
           <div class="col-md-12">
@@ -144,7 +144,7 @@
 
 
     <!-- Tabla de Convenios -->
-    <div *ngIf="!(loading$ | async) && !error" class="table-container">
+    <div *ngIf="!isLoading && !error" class="table-container">
       <div class="table-content">
         <table class="convenios-table">
           <thead>
@@ -173,22 +173,14 @@
               </td>
               <td>
                 <div class="action-buttons ">
-                  <button
-                    type="button"
-                    class="btn btn-outline-info btn-icon waves-effect waves-light"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Editar"
-                  >
+                  <button type="button" class="btn btn-outline-info btn-icon waves-effect waves-light"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                     <i class="las la-user-alt"></i>
                   </button>
-                  <a
-                    class="btn btn-outline-danger btn-icon waves-effect waves-light"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Inactivar"
-                    href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')"
-                  >
+
+
+                  <a class="btn btn-outline-danger btn-icon waves-effect waves-light" title="Inactivar"
+                    href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')">
                     <i class="las la-exclamation-circle"></i>
                   </a>
                 </div>
@@ -235,39 +227,41 @@
     <!-- Estado de carga -->
     <app-loading *ngIf="loading$ | async"></app-loading>
     <!--             
-    <div *ngIf="loading$ | async" class="loading-state">
+    <div *ngIf="isLoading" class="loading-state">
       <div class="spinner"></div>
       <p>Cargando recaudos, ámbitos, excepciones y programas...</p>
     </div> -->
 
     <!-- Estado de error -->
-    <div *ngIf="error && !(loading$ | async)" class="error-state">
+    <div *ngIf="error && !isLoading" class="error-state">
       <div class="error-icon">⚠️</div>
       <p class="error-message">{{ error }}</p>
       <button class="retry-button" (click)="retry()">Reintentar</button>
     </div>
 
     <!-- Main Grid Layout -->
-    <div *ngIf="!(loading$ | async) && !error" class="main-grid">
+    <div *ngIf="!isLoading && !error">
 
       <!-- Sidebar con Recaudos -->
-      <div class="sidebar-section">
+      <div class="sidebar-section  ">
         <div class="section-card">
-          <div class="card-header">
+          <!-- <div class="card-header">
             <h2 class="card-title">Recaudos Disponibles</h2>
             <span class="badge">{{ recaudos.length }}</span>
+          </div> -->
+
+
+          <div class="select">
+
+            <p-select class="w-full md:w-56 " [options]="recaudos" [(ngModel)]="selectedRecaudo" optionLabel="name"
+              optionValue="id" [filter]="true" placeholder="Seleccionar recaudo..." [disabled]="recaudos.length === 0"
+              (onChange)="onRecaudoSelect($event)"></p-select>
           </div>
 
-          <div class="dropdown-wrapper">
-            <select id="recaudos-select" class="modern-select" (change)="onRecaudoSelect($event)"
-              [disabled]="recaudos.length === 0">
 
-              <option value="">Seleccionar recaudo...</option>
-              <option *ngFor="let recaudo of recaudos; let i = index" [value]="recaudo.id">
-                {{ recaudo.name }}
-              </option>
-            </select>
-          </div>
+
+
+
 
           <!-- Info del recaudo seleccionado -->
           <div *ngIf="selectedRecaudo" class="selected-recaudo-info">
@@ -281,12 +275,19 @@
             <div class="info-details">
               <div class="detail-item">
                 <span class="label">ID:</span>
-                <span class="value">{{ selectedRecaudo.id }}</span>
+
+                
+
+             
+
+                  <span class="badge">{{ selectedRecaudo.id }}</span>
+                
+
               </div>
-              <div class="detail-item">
+              <!-- <div class="detail-item">
                 <span class="label">Operación:</span>
                 <span class="value">{{ selectedRecaudo.operacionId }}</span>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -393,19 +394,19 @@
               style="grid-column: 1/-1; padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 10px;">
               <p><strong>🔍 Debug Info:</strong></p>
               <p>• Programas array length: {{ programas.length }}</p>
-              <p>• Is loading: {{ loading$ | async }}</p>
+              <p>• Is loading: {{ isLoading }}</p>
               <p>• Has error: {{ !!error }}</p>
               <p>• Show formulario: {{ showFormulario }}</p>
             </div>
 
             <!-- Mostrar loading mientras se cargan los programas -->
-            <div *ngIf="loading$ | async" class="loading-state" style="grid-column: 1/-1;">
+            <div *ngIf="isLoading" class="loading-state" style="grid-column: 1/-1;">
               <div class="loading-spinner"></div>
               <p>Cargando programas de convenio...</p>
             </div>
 
             <!-- Mostrar mensaje si no hay programas disponibles -->
-            <div *ngIf="!(loading$ | async) && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
+            <div *ngIf="!isLoading && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
               <p>No hay programas de convenio disponibles</p>
               <small>Verifique la conexión o contacte al administrador</small>
             </div>
@@ -433,7 +434,7 @@
 
     <!-- Estado sin datos -->
 
-    <div *ngIf="!(loading$ | async) && !error && recaudos.length === 0" class="empty-state">
+    <div *ngIf="!isLoading && !error && recaudos.length === 0" class="empty-state">
       <div class="empty-icon">📋</div>
       <h3>No hay recaudos disponibles</h3>
       <p>No se encontraron recaudos para mostrar en este momento.</p>
