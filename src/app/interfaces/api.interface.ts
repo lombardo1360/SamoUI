@@ -17,6 +17,7 @@ export interface ConvenioRecaudoConfigurado {
   ambitoIds: number[] | null;
   otroItemsIds: number[] | null;
   programaIds: number[] | null;
+  nivelRecaudoNombre: string; // Nombre del nivel de recaudo
 }
 
 export interface ConvenioRecaudoConfigurationList {
@@ -80,4 +81,31 @@ export interface TablaDato {
 // Interface para selección con checkbox
 export interface DatoSeleccionado extends DatoTabla {
   selected: boolean;
+}
+
+// Interface para el detalle de ConvenioRecaudo (GET por ID)
+export interface ConvenioRecaudoDetalle {
+  id: number;
+  convenioId: number;
+  nivelRecaudoId: number;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+  usuarioId: string;
+  activo: boolean;
+  ambitoIds: number[] | null;
+  otroItemsIds: number[] | null;
+  programaIds: number[] | null;
+  nivelRecaudoNombre: string;
+}
+
+// Interface para actualizar ConvenioRecaudo (PUT)
+export interface ActualizarConvenioRecaudoRequest {
+  convenioRecaudo: {
+    id: number;
+    convenioId: number;
+    nivelRecaudoId: number;
+  };
+  ambitoIds: number[];
+  otroItemsIds: number[];
+  programaIds: number[];
 }

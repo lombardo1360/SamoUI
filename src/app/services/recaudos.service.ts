@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, RecaudoOperacion, TablaDato, DatoTabla, ConvenioRecaudoConfigurationList } from '../interfaces/api.interface';
+import { ApiResponse, RecaudoOperacion, TablaDato, DatoTabla, ConvenioRecaudoConfigurationList, ConvenioRecaudoDetalle, ActualizarConvenioRecaudoRequest } from '../interfaces/api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,34 @@ export class RecaudosService {
   private readonly API_BASE_URL = 'https://userdatix-001-site1.qtempurl.com/api';
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * Decodificar JWT token y extraer ConvenioId
+   */
+  decodeJWT(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decodificando JWT:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Extraer ConvenioId del token JWT
+   */
+  getConvenioIdFromToken(token: string): string | null {
+    const payload = this.decodeJWT(token);
+    return payload?.ConvenioId || null;
+  }
 
   /**
    * Obtener recaudos por operación
@@ -107,17 +135,51 @@ export class RecaudosService {
   /**
    * Obtener convenios recaudo configurados con paginación
    */
-  /**
-   * Obtener convenios recaudo configurados con paginación
-   */
-  getConvenioRecaudoConfigurados(pagina: number = 1, tamanoPagina: number = 10): Observable<ApiResponse<ConvenioRecaudoConfigurationList>> {
-    const params = new HttpParams()
+  getConvenioRecaudoConfigurados(
+    pagina: number = 1, 
+    tamanoPagina: number = 10, 
+    convenioId?: string
+  ): Observable<ApiResponse<ConvenioRecaudoConfigurationList>> {
+    let params = new HttpParams()
       .set('Pagina', pagina.toString())
       .set('TamañoPagina', tamanoPagina.toString());
+    
+    // Agregar ConvenioId si se proporciona
+    if (convenioId) {
+      params = params.set('ConvenioId', convenioId);
+    }
     
     return this.http.get<ApiResponse<ConvenioRecaudoConfigurationList>>(
       `${this.API_BASE_URL}/ConvenioRecaudo/ConvenioRecaudoConfigurados`,
       { params }
+    );
+  }
+
+  /**
+   * Obtener convenio recaudo configurado por ID
+   */
+  getConvenioRecaudoConfiguradoPorId(id: number): Observable<ApiResponse<ConvenioRecaudoDetalle>> {
+    return this.http.get<ApiResponse<ConvenioRecaudoDetalle>>(
+      `${this.API_BASE_URL}/ConvenioRecaudo/ConvenioRecaudoConfigurado/${id}`
+    );
+  }
+
+  /**
+   * Actualizar convenio recaudo configurado
+   */
+  actualizarConvenioRecaudo(convenioData: ActualizarConvenioRecaudoRequest): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(
+      `${this.API_BASE_URL}/ConvenioRecaudo/UpdateConvenioRecaudo`,
+      convenioData
+    );
+  }
+
+  /**
+   * Inactivar/Desactivar convenio recaudo configurado
+   */
+  inactivarConvenioRecaudo(id: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(
+      `${this.API_BASE_URL}/ConvenioRecaudo/InactivarConvenioRecaudo/${id}`
     );
   }
 }

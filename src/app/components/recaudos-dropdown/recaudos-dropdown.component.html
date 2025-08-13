@@ -6,7 +6,9 @@
         <div class="page-title-right">
           <ol class="breadcrumb m-0">
             <h4 class="mb-sm-0 btn-outline-primary"> <span *ngIf="!showFormulario">Convenios Configurados</span>
-              <span *ngIf="showFormulario">Nuevo Convenio de Recaudo</span>
+              <span *ngIf="showFormulario">
+                {{ isEditMode ? 'Editar Convenio de Recaudo' : 'Nuevo Convenio de Recaudo' }}
+              </span>
             </h4>
           </ol>
         </div>
@@ -37,8 +39,9 @@
               <i class="fa fa-plus-square fa-lg"></i>
             </button>
 
-            <button class="btn btn-outline-success mb-2" data-bs-toggle="tooltip" [disabled]="!canSave()"
-              [class.loading]="isSaving" (click)="guardarConfiguracion()" title="Guardar">
+            <button class="btn btn-outline-success mb-2" data-bs-toggle="tooltip" 
+              [disabled]="!showFormulario" [class.loading]="isSaving" (click)="guardarConfiguracion()" 
+              [title]="isEditMode ? 'Actualizar' : 'Guardar'">
               <i class="fa fa-floppy-o fa-lg"></i>
             </button>
 
@@ -149,38 +152,31 @@
         <table class="convenios-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Convenio ID</th>
-              <th>Nivel Recaudo ID</th>
+              <th>Nivel de Recaudo</th>
               <th>Fecha Creación</th>
-              <th>Usuario</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let convenio of conveniosConfigurados" class="table-row">
-              <td>{{ convenio.id }}</td>
-              <td>{{ convenio.convenioId }}</td>
-              <td>{{ convenio.nivelRecaudoId }}</td>
+              <td>{{ convenio.nivelRecaudoNombre }}</td>
               <td>{{ formatearFecha(convenio.fechaCreacion) }}</td>
-              <td>{{ convenio.usuarioId }}</td>
               <td>
                 <span class="status-badge" [class.active]="convenio.activo" [class.inactive]="!convenio.activo">
                   {{ convenio.activo ? 'Activo' : 'Inactivo' }}
                 </span>
-
               </td>
               <td>
-                <div class="action-buttons ">
+                <div class="action-buttons">
                   <button type="button" class="btn btn-outline-info btn-icon waves-effect waves-light"
-                    data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                    (click)="editarConvenio(convenio)">
                     <i class="las la-user-alt"></i>
                   </button>
 
-
                   <a class="btn btn-outline-danger btn-icon waves-effect waves-light" title="Inactivar"
-                    href="javascript:__doPostBack('ctl00$Main$DetalleEspecialidad$ctl202$btn_cambiarEstado','')">
+                    (click)="eliminarConvenio(convenio)">
                     <i class="las la-exclamation-circle"></i>
                   </a>
                 </div>

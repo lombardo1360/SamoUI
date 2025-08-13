@@ -398,14 +398,31 @@
     background: linear-gradient(135deg, $secondary-200 0%, $secondary-200 100%);
     
     th {
-      padding: $space-md;
+      padding: $space-md $space-lg;
       text-align: left;
       font-weight: 700;
       color: $secondary-700;
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       border-bottom: 2px solid $secondary-200;
+      
+      // Distribución optimizada para 4 columnas
+      &:nth-child(1) { // Nivel de Recaudo
+        width: 35%;
+        font-size: 0.9rem;
+      }
+      &:nth-child(2) { // Fecha Creación
+        width: 30%;
+      }
+      &:nth-child(3) { // Estado
+        width: 20%;
+        text-align: center;
+      }
+      &:nth-child(4) { // Acciones
+        width: 15%;
+        text-align: center;
+      }
     }
   }
   
@@ -425,9 +442,23 @@
         font-size: 0.875rem;
         line-height: 1.5;
         
-        &:first-child {
+        &:nth-child(1) { // Nivel de Recaudo
           font-weight: 600;
           color: $secondary-800;
+          font-size: 1rem;
+        }
+        
+        &:nth-child(2) { // Fecha Creación
+          font-size: 0.8rem;
+          color: $secondary-500;
+        }
+        
+        &:nth-child(3) { // Estado
+          text-align: center;
+        }
+        
+        &:nth-child(4) { // Acciones
+          text-align: center;
         }
       }
     }
