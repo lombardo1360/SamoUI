@@ -242,6 +242,22 @@
     <!-- Main Grid Layout -->
     <div *ngIf="!isLoading && !error">
 
+       <div class="card outline-badge-primary m-3">
+        <div class="card-content">
+          <div class="card-body p-3">
+            <div class="d-md-flex">
+             
+              <div class="content px-md-3 my-3 my-md-0">
+                <span class="mb-0 font-w-600 h5">Recaudo</span><br>
+                
+              </div>
+             
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       <!-- Sidebar con Recaudos -->
       <div class="sidebar-section  ">
         <div class="section-card">
@@ -276,12 +292,12 @@
               <div class="detail-item">
                 <span class="label">ID:</span>
 
-                
 
-             
 
-                  <span class="badge">{{ selectedRecaudo.id }}</span>
-                
+
+
+                <span class="badge">{{ selectedRecaudo.id }}</span>
+
 
               </div>
               <!-- <div class="detail-item">
@@ -293,144 +309,192 @@
         </div>
       </div>
 
-      <!-- Content Area con Cards -->
-      <div class="content-section">
 
-        <!-- Card de Ámbitos -->
-        <div class="content-card ambitos-card">
-          <div class="card-header">
-            <div class="header-content">
-              <h2 class="card-title">Ámbitos de Atención</h2>
-              <div class="selection-counter">
-                {{ getSelectedAmbitosCount() }}/{{ ambitos.length }}
+    </div>
+
+      <div class="card outline-badge-primary m-3">
+        <div class="card-content">
+          <div class="card-body p-3">
+            <div class="d-md-flex">
+             
+              <div class="content px-md-3 my-3 my-md-0">
+                <span class="mb-0 font-w-600 h5">Excepciones</span><br>
+                
               </div>
+             
             </div>
 
-            <label class="toggle-all">
-              <input type="checkbox" [checked]="isAllAmbitosSelected()" [class.indeterminate]="isAmbitosIndeterminate()"
-                (change)="toggleSelectAllAmbitos()">
-              <span class="toggle-checkmark"></span>
-              <span class="toggle-text">Seleccionar todos</span>
-            </label>
-          </div>
-
-          <div class="options-grid">
-            <label *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" class="option-card"
-              [class.selected]="ambito.selected">
-              <input type="checkbox" [checked]="ambito.selected" (change)="onAmbitoSelectionChange(ambito)">
-              <div class="option-content">
-                <span class="option-checkmark"></span>
-                <span class="option-text">{{ ambito.name }}</span>
-              </div>
-            </label>
-          </div>
-
-          <div *ngIf="getSelectedAmbitosCount() > 0" class="selection-summary ambitos-summary">
-            <div class="summary-header">
-              <span class="summary-icon">✓</span>
-              <span class="summary-title">{{ getSelectedAmbitosCount() }} ámbitos seleccionados</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card de Excepciones -->
-        <div class="content-card excepciones-card">
-          <div class="card-header">
-            <div class="header-content">
-              <h2 class="card-title">Otras Excepciones</h2>
-              <div class="selection-counter">
-                {{ getSelectedExcepcionesCount() }}/{{ excepciones.length }}
-              </div>
-            </div>
-
-            <label class="toggle-all">
-              <input type="checkbox" [checked]="isAllExcepcionesSelected()"
-                [class.indeterminate]="isExcepcionesIndeterminate()" (change)="toggleSelectAllExcepciones()">
-              <span class="toggle-checkmark"></span>
-              <span class="toggle-text">Seleccionar todas</span>
-            </label>
-          </div>
-
-          <div class="options-grid">
-            <label *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId" class="option-card"
-              [class.selected]="excepcion.selected">
-              <input type="checkbox" [checked]="excepcion.selected" (change)="onExcepcionSelectionChange(excepcion)">
-              <div class="option-content">
-                <span class="option-checkmark"></span>
-                <span class="option-text">{{ excepcion.name }}</span>
-              </div>
-            </label>
-          </div>
-
-          <div *ngIf="getSelectedExcepcionesCount() > 0" class="selection-summary excepciones-summary">
-            <div class="summary-header">
-              <span class="summary-icon">✓</span>
-              <span class="summary-title">{{ getSelectedExcepcionesCount() }} excepciones seleccionadas</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card de Programas -->
-        <div class="content-card programas-card">
-          <div class="card-header">
-            <div class="header-content">
-              <h2 class="card-title">Programas de Convenio</h2>
-              <div class="selection-counter">
-                {{ getSelectedProgramasCount() }}/{{ programas.length }}
-              </div>
-            </div>
-
-            <label class="toggle-all">
-              <input type="checkbox" [checked]="isAllProgramasSelected()"
-                [class.indeterminate]="isProgramasIndeterminate()" (change)="toggleSelectAllProgramas()">
-              <span class="toggle-checkmark"></span>
-              <span class="toggle-text">Seleccionar todos</span>
-            </label>
-          </div>
-
-          <div class="options-grid">
-            <!-- Debug info -->
-            <div *ngIf="programas.length === 0" class="debug-info"
-              style="grid-column: 1/-1; padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 10px;">
-              <p><strong>🔍 Debug Info:</strong></p>
-              <p>• Programas array length: {{ programas.length }}</p>
-              <p>• Is loading: {{ isLoading }}</p>
-              <p>• Has error: {{ !!error }}</p>
-              <p>• Show formulario: {{ showFormulario }}</p>
-            </div>
-
-            <!-- Mostrar loading mientras se cargan los programas -->
-            <div *ngIf="isLoading" class="loading-state" style="grid-column: 1/-1;">
-              <div class="loading-spinner"></div>
-              <p>Cargando programas de convenio...</p>
-            </div>
-
-            <!-- Mostrar mensaje si no hay programas disponibles -->
-            <div *ngIf="!isLoading && programas.length === 0" class="empty-state" style="grid-column: 1/-1;">
-              <p>No hay programas de convenio disponibles</p>
-              <small>Verifique la conexión o contacte al administrador</small>
-            </div>
-
-            <!-- Mostrar programas si están disponibles -->
-            <label *ngFor="let programa of programas; trackBy: trackByProgramaId" class="option-card"
-              [class.selected]="programa.selected">
-              <input type="checkbox" [checked]="programa.selected" (change)="onProgramaSelectionChange(programa)">
-              <div class="option-content">
-                <span class="option-checkmark"></span>
-                <span class="option-text">{{ programa.name }}</span>
-              </div>
-            </label>
-          </div>
-
-          <div *ngIf="getSelectedProgramasCount() > 0" class="selection-summary programas-summary">
-            <div class="summary-header">
-              <span class="summary-icon">✓</span>
-              <span class="summary-title">{{ getSelectedProgramasCount() }} programas seleccionados</span>
-            </div>
           </div>
         </div>
       </div>
+
+
+    <div class="row m-1">
+
+
+
+      <div class="col-12 col-lg-6 col-xl-4 mt-3">
+        <div class="card text-center">
+          <!-- Card Header -->
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Ámbitos</h4>
+
+            <!-- Checkbox "Seleccionar todos" -->
+            <div class="form-check ">
+              <input type="checkbox" class="form-check-input" id="toggleAllAmbitos" [checked]="isAllAmbitosSelected()"
+                [class.indeterminate]="isAmbitosIndeterminate()" (change)="toggleSelectAllAmbitos()">
+              <label class="form-check-label" for="toggleAllAmbitos">
+                Seleccionar todos
+              </label>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+
+
+            <!-- Lista de opciones -->
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <div *ngFor="let ambito of ambitos; trackBy: trackByAmbitoId" class="border rounded py-2 px-4 m-1"
+                [class.bg-light]="ambito.selected">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" [id]="'ambito-' + ambito.id"
+                    [checked]="ambito.selected" (change)="onAmbitoSelectionChange(ambito)">
+                  <label class="form-check-label" [for]="'ambito-' + ambito.id">
+                    {{ ambito.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div *ngIf="getSelectedAmbitosCount() > 0" class="card-footer btn btn-primary">
+            <i class="bx bx-check "></i>
+            <span class="small ">{{ getSelectedAmbitosCount() }} ámbitos seleccionados</span>
+          </div>
+
+
+
+        </div>
+      </div>
+      <div class="col-12 col-lg-6 col-xl-4 mt-3">
+        <div class="card text-center">
+
+          <!-- Card Header -->
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Programas</h4>
+
+            <!-- Contador y seleccionar todos -->
+            <div class="d-flex align-items-center">
+
+              <div class="form-check mb-0">
+                <input type="checkbox" class="form-check-input" id="toggleAllProgramas"
+                  [checked]="isAllProgramasSelected()" [class.indeterminate]="isProgramasIndeterminate()"
+                  (change)="toggleSelectAllProgramas()">
+                <label class="form-check-label" for="toggleAllProgramas">
+                  Seleccionar todos
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+
+            <!-- Debug info -->
+            <div *ngIf="programas.length === 0 && !isLoading" class="alert alert-warning w-100">
+              <strong>ℹ️ No hay programas de convenio disponibles.</strong>
+              <div class="small">Verifique la conexión o contacte al administrador.</div>
+            </div>
+
+            <!-- Loading -->
+            <div *ngIf="isLoading" class="text-center w-100 py-3">
+              <div class="spinner-border text-primary"></div>
+              <p class="mt-2 mb-0">Cargando programas de convenio...</p>
+            </div>
+
+            <!-- Lista de programas -->
+            <div class="d-flex flex-wrap gap-2 justify-content-center" *ngIf="!isLoading && programas.length > 0">
+              <div *ngFor="let programa of programas; trackBy: trackByProgramaId" class="border rounded py-2 px-2 m-1"
+                [class.bg-light]="programa.selected">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" [id]="'programa-' + programa.id"
+                    [checked]="programa.selected" (change)="onProgramaSelectionChange(programa)">
+                  <label class="form-check-label" [for]="'programa-' + programa.id">
+                    {{ programa.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div *ngIf="getSelectedProgramasCount() > 0" class="card-footer btn btn-primary py-2">
+            <i class="bx bx-check"></i>
+            <span class="small ms-2">
+              {{ getSelectedProgramasCount() }} programas seleccionados
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="col-12 col-lg-6 col-xl-4 mt-3">
+        <div class="card text-center">
+
+          <!-- Card Header -->
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Otras </h4>
+
+            <!-- Checkbox "Seleccionar todas" -->
+            <div class="form-check mb-0">
+              <input type="checkbox" class="form-check-input" id="toggleAllExcepciones"
+                [checked]="isAllExcepcionesSelected()" [class.indeterminate]="isExcepcionesIndeterminate()"
+                (change)="toggleSelectAllExcepciones()">
+              <label class="form-check-label" for="toggleAllExcepciones">
+                Seleccionar todas
+              </label>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <div *ngFor="let excepcion of excepciones; trackBy: trackByExcepcionId"
+                class="border rounded py-2 px-2 m-1" [class.bg-light]="excepcion.selected">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" [id]="'excepcion-' + excepcion.id"
+                    [checked]="excepcion.selected" (change)="onExcepcionSelectionChange(excepcion)">
+                  <label class="form-check-label" [for]="'excepcion-' + excepcion.id">
+                    {{ excepcion.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div *ngIf="getSelectedExcepcionesCount() > 0" class="card-footer btn btn-primary py-2">
+            <i class="bx bx-check"></i>
+            <span class="small ms-2">
+              {{ getSelectedExcepcionesCount() }} excepciones seleccionadas
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+
     </div>
+
+
+
+
 
     <!-- Estado sin datos -->
 
