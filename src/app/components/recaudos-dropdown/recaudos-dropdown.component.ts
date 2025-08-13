@@ -212,16 +212,14 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  onRecaudoSelect(event: any): void {
-    // event.value contiene el id seleccionado
-    const selectedId = event.value;
-    if (selectedId) {
-      this.selectedRecaudo = this.recaudos.find(r => r.id === selectedId) || null;
-      console.log('Recaudo seleccionado:', this.selectedRecaudo);
-    } else {
-      this.selectedRecaudo = null;
-    }
-  }
+onRecaudoSelect(event: any): void {
+  this.selectedRecaudo = event?.value ?? null;
+  console.log('Recaudo seleccionado:', this.selectedRecaudo);
+}
+
+ 
+
+
 
   // Método para reintentar carga
   retry(): void {
