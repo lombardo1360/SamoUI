@@ -3,12 +3,25 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subject, takeUntil, combineLatest, switchMap, forkJoin } from 'rxjs';
+import { AuthService } from '../../s    if (this.isEditMode && this.editingConvenio) {
+      // Modo edición - actualizar convenio existente
+      const actualizarData: ActualizarConvenioRecaudoRequest = {
+        convenioRecaudo: {
+          id: this.editingConvenio.id,
+          convenioId: this.editingConvenio.convenioId,
+          nivelRecaudoId: this.selectedRecaudo.id
+        },
+        ambitoIds: this.ambitos.filter(a => a.selected).map(a => a.id),
+        otroItemsIds: this.excepciones.filter(e => e.selected).map(e => e.id),
+        programaIds: this.programas.filter(p => p.selected).map(p => p.id)
+      };
+
+      console.log('🔄 Actualizando configuración:', actualizarData);ce';
 import { RecaudosService } from '../../services/recaudos.service';
 import { RecaudoOperacion, DatoTabla, DatoSeleccionado, ConvenioRecaudoConfigurado, ConvenioRecaudoConfigurationList, ConvenioRecaudoDetalle, ActualizarConvenioRecaudoRequest } from '../../interfaces/api.interface';
 import { LoadingService } from '../../services/loading.service';
 import { LoadingComponent } from '../loading/loading.component';
 import { SelectModule } from 'primeng/select';
-import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -393,7 +406,11 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
         convenioRecaudo: {
           id: this.editingConvenio.id,
           convenioId: this.editingConvenio.convenioId,
-          nivelRecaudoId: this.selectedRecaudo.id
+          nivelRecaudoId: this.selectedRecaudo.id,
+          fechaCreacion: this.editingConvenio.fechaCreacion,
+          fechaModificacion: new Date().toISOString(),
+          usuarioId: this.editingConvenio.usuarioId,
+          activo: this.editingConvenio.activo
         },
         ambitoIds: this.ambitos.filter(a => a.selected).map(a => a.id),
         otroItemsIds: this.excepciones.filter(e => e.selected).map(e => e.id),
@@ -716,32 +733,15 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
    * Eliminar convenio configurado
    */
   eliminarConvenio(convenio: ConvenioRecaudoConfigurado): void {
-    console.log('🗑️ Inactivando convenio:', convenio);
+    console.log('🗑️ Eliminando convenio:', convenio);
     
-    // Confirmar inactivación
-    if (confirm(`¿Está seguro de que desea inactivar la configuración del ${convenio.nivelRecaudoNombre}?`)) {
-      this.loadingService.show();
+    // Confirmar eliminación
+    if (confirm(`¿Está seguro de que desea eliminar la configuración del ${convenio.nivelRecaudoNombre}?`)) {
+      // TODO: Implementar llamada al servicio para eliminar
+      console.log('✅ Convenio eliminado:', convenio.id);
       
-      this.recaudosService.inactivarConvenioRecaudo(convenio.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            this.loadingService.hide();
-            if (response.codigo === 200) {
-              console.log('✅ Convenio inactivado exitosamente:', response);
-              // Recargar lista después de inactivar
-              this.loadConveniosConfigurados();
-            } else {
-              console.error('❌ Error al inactivar convenio:', response.mensaje);
-              alert('Error al inactivar el convenio: ' + response.mensaje);
-            }
-          },
-          error: (error) => {
-            this.loadingService.hide();
-            console.error('❌ Error al inactivar convenio:', error);
-            alert('Error al inactivar el convenio. Intente nuevamente.');
-          }
-        });
+      // Recargar lista después de eliminar
+      this.loadConveniosConfigurados();
     }
   }
 }
