@@ -24,6 +24,21 @@
   </div>
   <!-- Header -->
 
+  <!-- Mensaje de Éxito -->
+  <div class="success-message-overlay" *ngIf="showSuccessMessage">
+    <div class="success-message-container">
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="success-content">
+        <h5>¡Operación Exitosa!</h5>
+        <p>{{ successMessage }}</p>
+      </div>
+      <button type="button" class="close-success-btn" (click)="cerrarMensajeExito()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
 
   <!-- Botones de Acción Globales -->
 
@@ -475,6 +490,63 @@
       <div class="empty-icon">📋</div>
       <h3>No hay recaudos disponibles</h3>
       <p>No se encontraron recaudos para mostrar en este momento.</p>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación para Desactivar Convenio -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelarEliminacion()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-exclamation-triangle warning-icon"></i>
+          <h4>Confirmar Desactivación</h4>
+        </div>
+        <button type="button" class="close-button" (click)="cancelarEliminacion()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="confirmation-content">
+          <div class="warning-section">
+            <i class="fas fa-info-circle info-icon"></i>
+            <p class="main-message">¿Está seguro de que desea desactivar la siguiente configuración de convenio?</p>
+          </div>
+          
+          <div class="convenio-details" *ngIf="convenioToDelete">
+            <div class="detail-card">
+              <div class="detail-row">
+                <span class="detail-label">Nivel de Recaudo:</span>
+                <span class="detail-value">{{ convenioToDelete.nivelRecaudoNombre }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Estado Actual:</span>
+                <span class="detail-value status-active">Activo</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Fecha de Creación:</span>
+                <span class="detail-value">{{ formatearFecha(convenioToDelete.fechaCreacion) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="warning-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Esta acción no se puede deshacer. El convenio será desactivado permanentemente.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelarEliminacion()">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmarEliminacion()">
+          <i class="fas fa-ban"></i>
+          Desactivar Convenio
+        </button>
+      </div>
     </div>
   </div>
 </div>

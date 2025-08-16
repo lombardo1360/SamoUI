@@ -1779,3 +1779,401 @@
     font-size: 0.8125rem;
   }
 }
+
+/* ================================
+   MENSAJE DE ÉXITO
+   ================================ */
+
+.success-message-overlay {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1060;
+  animation: slideInRight 0.4s ease-out;
+}
+
+.success-message-container {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 350px;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+  
+  // Efecto de brillo
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shine 2s infinite;
+  }
+  
+  .success-icon {
+    font-size: 2rem;
+    color: white;
+    flex-shrink: 0;
+    
+    i {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .success-content {
+    flex: 1;
+    
+    h5 {
+      margin: 0 0 4px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.95;
+      line-height: 1.4;
+    }
+  }
+  
+  .close-success-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Responsive design para el mensaje de éxito
+@media (max-width: 576px) {
+  .success-message-overlay {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+  
+  .success-message-container {
+    min-width: unset;
+    width: 100%;
+    padding: 16px 20px;
+    
+    .success-icon {
+      font-size: 1.5rem;
+    }
+    
+    .success-content {
+      h5 {
+        font-size: 1rem;
+      }
+      
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+/* ================================
+   MODAL DE CONFIRMACIÓN DE DESACTIVACIÓN
+   ================================ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  
+  .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .warning-icon {
+      color: #ffc107;
+      font-size: 1.5rem;
+    }
+    
+    h4 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #212529;
+    }
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: #e9ecef;
+      color: #495057;
+    }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+  
+  .confirmation-content {
+    .warning-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      
+      .info-icon {
+        color: #17a2b8;
+        font-size: 1.25rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      
+      .main-message {
+        margin: 0;
+        font-size: 1rem;
+        color: #495057;
+        line-height: 1.5;
+      }
+    }
+    
+    .convenio-details {
+      margin-bottom: 20px;
+      
+      .detail-card {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 16px;
+        
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 0;
+          
+          &:not(:last-child) {
+            border-bottom: 1px solid #e9ecef;
+          }
+          
+          .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.875rem;
+          }
+          
+          .detail-value {
+            color: #212529;
+            font-weight: 500;
+            text-align: right;
+            
+            &.status-active {
+              color: #28a745;
+              background-color: #d4edda;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 0.8rem;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+    
+    .warning-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      color: #856404;
+      font-size: 0.875rem;
+      
+      i {
+        color: #ffc107;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    
+    &.btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: #5a6268;
+        transform: translateY(-1px);
+      }
+    }
+    
+    &.btn-danger {
+      background-color: #dc3545;
+      color: white;
+      
+      &:hover {
+        background-color: #c82333;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -50px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+// Responsive design
+@media (max-width: 576px) {
+  .modal-container {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+    
+    .modal-title h4 {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    padding: 16px 20px;
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .convenio-details .detail-card .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    
+    .detail-value {
+      text-align: left;
+    }
+  }
+}
