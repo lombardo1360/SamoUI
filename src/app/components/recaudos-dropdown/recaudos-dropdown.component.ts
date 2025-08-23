@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -73,6 +73,7 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
     private recaudosService: RecaudosService,
     private loadingService: LoadingService,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.loading$ = this.loadingService.loading$;
@@ -84,7 +85,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
       if (params['token']) {
         // Token recibido por URL - usar este token para todas las peticiones
         this.token = params['token'];
-        console.log('🔑 Token recibido por URL:', this.token);
         
         // Establecer token en AuthService (esto manejará la decodificación automáticamente)
         if (this.token) {
@@ -94,10 +94,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
         // Obtener el ConvenioId del AuthService después de que se procese el token
         setTimeout(() => {
           this.convenioId = this.authService.getConvenioId();
-          console.log('🏢 ConvenioId extraído del token:', this.convenioId);
-          
-          // Debug del estado del token
-          this.authService.debugTokenState();
           
           // Cargar datos una vez que tenemos el token y ConvenioId
           this.loadConveniosConfigurados();
@@ -106,7 +102,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
         
       } else {
         // No hay token en URL - usar autenticación normal
-        console.log('📝 No hay token en URL, usando autenticación normal...');
         this.authService.initialize();
         this.loadConveniosConfigurados();
       }
@@ -127,9 +122,7 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
       takeUntil(this.destroy$),
       switchMap(([token, operacionId]) => {
         if (token && operacionId) {
-          console.log('Token y OperacionId disponibles, cargando datos...');
           this.loadingService.hide();
-          //this.isLoading = true;
           this.error = null;
           
           // Cargar recaudos, ámbitos, excepciones y programas en paralelo
@@ -140,19 +133,16 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
             programasData: this.recaudosService.getProgramasConvenioRecaudo()
           });
         } else {
-          console.log('Esperando token y operacionId...');
           return [];
         }
       })
     ).subscribe({
       next: (data: any) => {
         this.loadingService.hide();
-        //this.isLoading = false;
         
         if (data.recaudosResponse) {
           if (data.recaudosResponse.codigo === 200) {
             this.recaudos = data.recaudosResponse.datos || [];
-            console.log('✅ Recaudos cargados:', this.recaudos);
           } else {
             this.error = data.recaudosResponse.mensaje || 'Error al cargar recaudos';
           }
@@ -163,7 +153,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
             ...dato,
             selected: false
           }));
-          console.log('✅ Ámbitos cargados:', this.ambitos);
         }
 
         if (data.excepcionesData) {
@@ -171,17 +160,13 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
             ...dato,
             selected: false
           }));
-          console.log('✅ Excepciones cargadas:', this.excepciones);
         }
 
         if (data.programasData) {
-          console.log('🔍 Datos de programas recibidos:', data.programasData);
-          
           let programasArray: any[] = [];
           
           // Verificar si es una respuesta API con estructura { codigo, mensaje, datos }
           if (data.programasData.codigo && data.programasData.datos) {
-            console.log('📋 Respuesta API de programas:', data.programasData);
             if (data.programasData.codigo === 200 && Array.isArray(data.programasData.datos)) {
               programasArray = data.programasData.datos;
             } else {
@@ -202,16 +187,10 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
             equivalente: null,
             selected: programa.seleccionado || false // Usar 'seleccionado' del API
           }));
-          
-          console.log('✅ Programas procesados:', this.programas);
-          console.log('🔢 Cantidad de programas:', this.programas.length);
-        } else {
-          console.warn('⚠️ No se recibieron datos de programas');
         }
       },
       error: (error) => {
         this.loadingService.hide();
-        //this.isLoading = false;
         this.error = 'Error de conexión al cargar recaudos';
         console.error('Error al cargar recaudos:', error);
       }
@@ -220,7 +199,6 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
 
 onRecaudoSelect(event: any): void {
   this.selectedRecaudo = event?.value ?? null;
-  console.log('Recaudo seleccionado:', this.selectedRecaudo);
 }
 
  
@@ -237,8 +215,6 @@ onRecaudoSelect(event: any): void {
    */
   onAmbitoSelectionChange(ambito: DatoSeleccionado): void {
     ambito.selected = !ambito.selected;
-    const seleccionados = this.ambitos.filter(a => a.selected);
-    console.log('🏥 Ámbitos seleccionados:', seleccionados);
   }
 
   /**
@@ -247,8 +223,6 @@ onRecaudoSelect(event: any): void {
   toggleSelectAllAmbitos(): void {
     const allSelected = this.ambitos.every(a => a.selected);
     this.ambitos.forEach(a => a.selected = !allSelected);
-    const seleccionados = this.ambitos.filter(a => a.selected);
-    console.log('🏥 Todos los ámbitos:', allSelected ? 'deseleccionados' : 'seleccionados');
   }
 
   /**
@@ -284,8 +258,6 @@ onRecaudoSelect(event: any): void {
    */
   onExcepcionSelectionChange(excepcion: DatoSeleccionado): void {
     excepcion.selected = !excepcion.selected;
-    const seleccionados = this.excepciones.filter(e => e.selected);
-    console.log('⚠️ Excepciones seleccionadas:', seleccionados);
   }
 
   /**
@@ -294,8 +266,6 @@ onRecaudoSelect(event: any): void {
   toggleSelectAllExcepciones(): void {
     const allSelected = this.excepciones.every(e => e.selected);
     this.excepciones.forEach(e => e.selected = !allSelected);
-    const seleccionados = this.excepciones.filter(e => e.selected);
-    console.log('⚠️ Todas las excepciones:', allSelected ? 'deseleccionadas' : 'seleccionadas');
   }
 
   /**
@@ -333,8 +303,6 @@ onRecaudoSelect(event: any): void {
    */
   onProgramaSelectionChange(programa: DatoSeleccionado): void {
     programa.selected = !programa.selected;
-    const seleccionados = this.programas.filter(p => p.selected);
-    console.log('🎯 Programas seleccionados:', seleccionados);
   }
 
   /**
@@ -343,8 +311,6 @@ onRecaudoSelect(event: any): void {
   toggleSelectAllProgramas(): void {
     const allSelected = this.programas.every(p => p.selected);
     this.programas.forEach(p => p.selected = !allSelected);
-    const seleccionados = this.programas.filter(p => p.selected);
-    console.log('🎯 Todos los programas:', allSelected ? 'deseleccionados' : 'seleccionados');
   }
 
   /**
@@ -404,15 +370,12 @@ onRecaudoSelect(event: any): void {
         programaIds: this.programas.filter(p => p.selected).map(p => p.id)
       };
 
-      console.log('� Actualizando configuración:', actualizarData);
-
       this.recaudosService.actualizarConvenioRecaudo(actualizarData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             this.loadingService.hide();
             this.saveSuccess = true;
-            console.log('✅ Configuración actualizada exitosamente:', response);
             
             // Mostrar mensaje de éxito y volver a la lista
             setTimeout(() => {
@@ -464,7 +427,6 @@ onRecaudoSelect(event: any): void {
           next: (response) => {
             this.loadingService.hide();
             this.saveSuccess = true;
-            console.log('✅ Configuración guardada exitosamente:', response);
             
             // Mostrar mensaje de éxito y volver a la lista
             setTimeout(() => {
@@ -494,7 +456,6 @@ onRecaudoSelect(event: any): void {
    * Mostrar formulario para añadir nueva configuración
    */
   addConfiguration(): void {
-    console.log('➕ Mostrando formulario para añadir nueva configuración...');
     this.mostrarFormulario();
   }
 
@@ -526,8 +487,6 @@ onRecaudoSelect(event: any): void {
       // Limpiar programas
       this.programas.forEach(programa => programa.selected = false);
       
-      console.log('🗑️ Todas las selecciones han sido limpiadas');
-      
       // Mostrar la lista después de limpiar
       this.mostrarLista();
     }
@@ -557,8 +516,6 @@ onRecaudoSelect(event: any): void {
           if (response.codigo === 200) {
             this.conveniosConfigurados = response.datos.elementos;
             this.totalPaginas = response.datos.totalPaginas;
-            console.log('✅ Convenios configurados cargados:', this.conveniosConfigurados);
-            console.log('🔍 ConvenioId usado en consulta:', convenioIdToUse);
           } else {
             this.error = response.mensaje || 'Error al cargar los convenios configurados';
           }
@@ -658,8 +615,6 @@ onRecaudoSelect(event: any): void {
    * Editar convenio configurado
    */
   editarConvenio(convenio: ConvenioRecaudoConfigurado): void {
-    console.log('🔧 Editando convenio:', convenio);
-    
     // Configurar modo edición
     this.isEditMode = true;
     this.editingConvenio = convenio;
@@ -667,52 +622,138 @@ onRecaudoSelect(event: any): void {
     // Mostrar el formulario
     this.showFormulario = true;
     
-    // Primero inicializar todas las opciones disponibles
     this.loadingService.show();
-    console.log('🔄 Cargando opciones para modo edición...');
     
-    // Cargar todas las opciones primero
-    this.initializeData();
+    // Verificar si ya tenemos las opciones cargadas
+    const opcionesCargadas = this.recaudos.length > 0 && this.ambitos.length > 0 && 
+                            this.excepciones.length > 0 && this.programas.length > 0;
     
-    // Luego cargar los datos específicos del convenio
-    setTimeout(() => {
-      // Verificar si las opciones se cargaron correctamente
-      if (this.recaudos.length === 0 || this.ambitos.length === 0) {
-        console.log('🔄 Recargando opciones básicas...');
-        this.cargarOpcionesBasicas();
-      }
-      
-      this.recaudosService.getConvenioRecaudoConfiguradoPorId(convenio.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            this.loadingService.hide();
-            if (response.codigo === 200) {
-              const convenioDetalle = response.datos;
-              console.log('✅ Datos del convenio cargados:', convenioDetalle);
-              
-              // Precargar datos en el formulario
+    if (opcionesCargadas) {
+      this.cargarDatosConvenio(convenio.id);
+    } else {
+      // Solo cargar opciones si no están disponibles, sin resetear las existentes
+      this.cargarOpcionesParaEdicion().then(() => {
+        this.cargarDatosConvenio(convenio.id);
+      }).catch((error) => {
+        console.error('❌ Error cargando opciones:', error);
+        this.loadingService.hide();
+        this.error = 'Error al cargar las opciones necesarias';
+      });
+    }
+  }
+
+  /**
+   * Cargar datos específicos del convenio
+   */
+  private cargarDatosConvenio(convenioId: number): void {
+    this.recaudosService.getConvenioRecaudoConfiguradoPorId(convenioId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.loadingService.hide();
+          if (response.codigo === 200) {
+            const convenioDetalle = response.datos;
+            
+            // Verificar que las opciones estén disponibles antes de precargar
+            if (this.ambitos.length > 0 && this.excepciones.length > 0 && this.programas.length > 0) {
               this.precargarDatosEdicion(convenioDetalle);
             } else {
-              console.error('❌ Error al cargar convenio:', response.mensaje);
-              this.error = response.mensaje;
+              setTimeout(() => {
+                this.precargarDatosEdicion(convenioDetalle);
+              }, 1000);
             }
-          },
-          error: (error) => {
-            this.loadingService.hide();
-            console.error('❌ Error al cargar convenio:', error);
-            this.error = 'Error al cargar los datos del convenio';
+          } else {
+            console.error('❌ Error al cargar convenio:', response.mensaje);
+            this.error = response.mensaje;
           }
-        });
-    }, 1000); // Dar tiempo para que se carguen las opciones
+        },
+        error: (error) => {
+          this.loadingService.hide();
+          console.error('❌ Error al cargar convenio:', error);
+          this.error = 'Error al cargar los datos del convenio';
+        }
+      });
+  }
+
+  /**
+   * Cargar opciones específicamente para edición (Promise-based)
+   */
+  private cargarOpcionesParaEdicion(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Obtener operacionId del AuthService
+      const operacionId = this.authService.getOperacionId();
+      
+      if (!operacionId) {
+        this.cargarOpcionesBasicas();
+        setTimeout(() => resolve(), 2000);
+        return;
+      }
+      
+      // Cargar todas las opciones en paralelo
+      forkJoin({
+        recaudosResponse: this.recaudosService.getRecaudosOperacion(operacionId),
+        ambitosData: this.recaudosService.getAmbitosAtencionMedica(),
+        excepcionesData: this.recaudosService.getOtrasExcepcionesRecaudo(),
+        programasData: this.recaudosService.getProgramasConvenioRecaudo()
+      }).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          // Procesar recaudos
+          if (data.recaudosResponse && data.recaudosResponse.codigo === 200) {
+            this.recaudos = data.recaudosResponse.datos || [];
+          }
+          
+          // Procesar ámbitos
+          if (data.ambitosData && Array.isArray(data.ambitosData)) {
+            this.ambitos = data.ambitosData.map((dato: DatoTabla) => ({
+              ...dato,
+              selected: false
+            }));
+          }
+          
+          // Procesar excepciones
+          if (data.excepcionesData && Array.isArray(data.excepcionesData)) {
+            this.excepciones = data.excepcionesData.map((dato: DatoTabla) => ({
+              ...dato,
+              selected: false
+            }));
+          }
+          
+          // Procesar programas
+          if (data.programasData) {
+            let programasArray: any[] = [];
+            
+            if (data.programasData.codigo && data.programasData.datos) {
+              if (data.programasData.codigo === 200 && Array.isArray(data.programasData.datos)) {
+                programasArray = data.programasData.datos;
+              }
+            } else if (Array.isArray(data.programasData)) {
+              programasArray = data.programasData;
+            }
+            
+            this.programas = programasArray.map((programa: any) => ({
+              id: programa.id,
+              name: programa.nombre,
+              orden: null,
+              equivalente: null,
+              selected: false
+            }));
+          }
+          
+          resolve();
+        },
+        error: (error) => {
+          console.error('❌ Error cargando opciones para edición:', error);
+          reject(error);
+        }
+      });
+    });
   }
 
   /**
    * Cargar opciones básicas cuando no se cargan automáticamente
    */
   private cargarOpcionesBasicas(): void {
-    console.log('🔄 Cargando opciones básicas...');
-    
     // Cargar ámbitos si no están disponibles
     if (this.ambitos.length === 0) {
       this.recaudosService.getAmbitosAtencionMedica()
@@ -723,7 +764,6 @@ onRecaudoSelect(event: any): void {
               ...dato,
               selected: false
             }));
-            console.log('✅ Ámbitos cargados:', this.ambitos.length);
           },
           error: (error) => console.error('❌ Error cargando ámbitos:', error)
         });
@@ -739,7 +779,6 @@ onRecaudoSelect(event: any): void {
               ...dato,
               selected: false
             }));
-            console.log('✅ Excepciones cargadas:', this.excepciones.length);
           },
           error: (error) => console.error('❌ Error cargando excepciones:', error)
         });
@@ -768,8 +807,6 @@ onRecaudoSelect(event: any): void {
               equivalente: null,
               selected: false
             }));
-            
-            console.log('✅ Programas cargados:', this.programas.length);
           },
           error: (error) => console.error('❌ Error cargando programas:', error)
         });
@@ -780,65 +817,69 @@ onRecaudoSelect(event: any): void {
    * Precargar datos del convenio en el formulario para edición
    */
   private precargarDatosEdicion(convenio: any): void {
-    console.log('🎯 Precargando datos para edición:', convenio);
-    
-    // Seleccionar el recaudo correspondiente
-    const recaudoEncontrado = this.recaudos.find(r => r.id === convenio.nivelRecaudoId);
-    if (recaudoEncontrado) {
-      this.selectedRecaudo = recaudoEncontrado;
-      console.log('🎯 Recaudo seleccionado:', this.selectedRecaudo);
-    } else {
-      console.warn('⚠️ No se encontró el recaudo con ID:', convenio.nivelRecaudoId);
-    }
+    // Pequeño delay para asegurar que el DOM esté listo
+    setTimeout(() => {
+      // Seleccionar el recaudo correspondiente
+      const recaudoEncontrado = this.recaudos.find(r => r.id === convenio.nivelRecaudoId);
+      if (recaudoEncontrado) {
+        this.selectedRecaudo = recaudoEncontrado;
+      }
 
-    // Precargar ámbitos seleccionados (mostrar todas las opciones disponibles)
-    if (this.ambitos.length > 0) {
-      this.ambitos.forEach(ambito => {
-        // Marcar como seleccionados solo los que están en el convenio
-        ambito.selected = convenio.ambitoIds && Array.isArray(convenio.ambitoIds) 
-          ? convenio.ambitoIds.includes(ambito.id) 
-          : false;
-      });
-      console.log('🏥 Ámbitos disponibles:', this.ambitos.length, 'Seleccionados:', convenio.ambitoIds || []);
-    } else {
-      console.warn('⚠️ No hay ámbitos disponibles para mostrar');
-    }
+      // Precargar ámbitos seleccionados
+      if (this.ambitos.length > 0) {
+        let ambitosSeleccionados: number[] = [];
+        
+        if (convenio.ambitoIds && Array.isArray(convenio.ambitoIds)) {
+          ambitosSeleccionados = convenio.ambitoIds;
+        } else if (convenio.ambitos && Array.isArray(convenio.ambitos)) {
+          ambitosSeleccionados = convenio.ambitos.map((ambito: any) => ambito.id || ambito);
+        }
+        
+        this.ambitos.forEach(ambito => {
+          ambito.selected = ambitosSeleccionados.includes(ambito.id);
+        });
+      }
 
-    // Precargar excepciones seleccionadas (mostrar todas las opciones disponibles)
-    if (this.excepciones.length > 0) {
-      this.excepciones.forEach(excepcion => {
-        // Marcar como seleccionadas solo las que están en el convenio
-        excepcion.selected = convenio.otroItemsIds && Array.isArray(convenio.otroItemsIds) 
-          ? convenio.otroItemsIds.includes(excepcion.id) 
-          : false;
-      });
-      console.log('⚠️ Excepciones disponibles:', this.excepciones.length, 'Seleccionadas:', convenio.otroItemsIds || []);
-    } else {
-      console.warn('⚠️ No hay excepciones disponibles para mostrar');
-    }
+      // Precargar excepciones seleccionadas
+      if (this.excepciones.length > 0) {
+        let excepcionesSeleccionadas: number[] = [];
+        
+        if (convenio.otroItemsIds && Array.isArray(convenio.otroItemsIds)) {
+          excepcionesSeleccionadas = convenio.otroItemsIds;
+        } else if (convenio.otroItems && Array.isArray(convenio.otroItems)) {
+          excepcionesSeleccionadas = convenio.otroItems.map((item: any) => item.id || item);
+        }
+        
+        this.excepciones.forEach(excepcion => {
+          excepcion.selected = excepcionesSeleccionadas.includes(excepcion.id);
+        });
+      }
 
-    // Precargar programas seleccionados (mostrar todas las opciones disponibles)
-    if (this.programas.length > 0) {
-      this.programas.forEach(programa => {
-        // Marcar como seleccionados solo los que están en el convenio
-        programa.selected = convenio.programaIds && Array.isArray(convenio.programaIds) 
-          ? convenio.programaIds.includes(programa.id) 
-          : false;
-      });
-      console.log('📋 Programas disponibles:', this.programas.length, 'Seleccionados:', convenio.programaIds || []);
-    } else {
-      console.warn('⚠️ No hay programas disponibles para mostrar');
-    }
+      // Precargar programas seleccionados
+      if (this.programas.length > 0) {
+        let programasSeleccionados: number[] = [];
+        
+        if (convenio.programaIds && Array.isArray(convenio.programaIds)) {
+          programasSeleccionados = convenio.programaIds;
+        } else if (convenio.programas && Array.isArray(convenio.programas)) {
+          programasSeleccionados = convenio.programas.map((programa: any) => programa.id || programa);
+        }
+        
+        this.programas.forEach(programa => {
+          programa.selected = programasSeleccionados.includes(programa.id);
+        });
+      }
 
-    console.log('✅ Datos precargados exitosamente para edición');
-    console.log('📊 Estado final - Ámbitos:', this.ambitos.length, 'Excepciones:', this.excepciones.length, 'Programas:', this.programas.length);
+      // Forzar detección de cambios
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   /**
    * Eliminar convenio configurado
    */
   eliminarConvenio(convenio: ConvenioRecaudoConfigurado): void {
-    console.log('🗑️ Solicitando confirmación para inactivar convenio:', convenio);
     this.convenioToDelete = convenio;
     this.showDeleteModal = true;
   }
@@ -865,7 +906,6 @@ onRecaudoSelect(event: any): void {
   confirmarEliminacion(): void {
     if (!this.convenioToDelete) return;
 
-    console.log('🗑️ Confirmando inactivación de convenio:', this.convenioToDelete);
     this.loadingService.show();
     
     this.recaudosService.inactivarConvenioRecaudo(this.convenioToDelete.id)
@@ -874,8 +914,6 @@ onRecaudoSelect(event: any): void {
         next: (response) => {
           this.loadingService.hide();
           if (response.codigo === 200) {
-            console.log('✅ Convenio inactivado exitosamente:', response);
-            
             // Mostrar mensaje de éxito
             this.successMessage = `La configuración del ${this.convenioToDelete!.nivelRecaudoNombre} ha sido desactivada exitosamente.`;
             this.showSuccessMessage = true;
