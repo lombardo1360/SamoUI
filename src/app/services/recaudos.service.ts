@@ -157,7 +157,7 @@ export class RecaudosService {
   }
 
   /**
-   * Configurar convenio recaudo (invalida caché relacionado)
+   * Configurar convenio recaudo (SIN CACHÉ - siempre datos frescos)
    */
   configurarConvenioRecaudo(configuracion: any): Observable<any> {
     return new Observable(observer => {
@@ -165,8 +165,9 @@ export class RecaudosService {
         next: (response) => {
           console.log('✅ Configuración enviada exitosamente:', response);
           
-          // Limpiar caché relacionado después de crear/modificar
-          this.invalidateConveniosCache(configuracion.convenioRecaudo?.convenioId);
+          // NOTA: No es necesario invalidar caché ya que getConvenioRecaudoConfigurados() no usa caché
+          // Solo invalidamos caché de detalles si es necesario
+          this.invalidateConvenioDetailCache(configuracion.convenioRecaudo?.convenioId);
           
           observer.next(response);
           observer.complete();
@@ -180,33 +181,27 @@ export class RecaudosService {
   }
 
   /**
-   * Obtener convenios recaudo configurados con paginación (con caché)
+   * Obtener convenios recaudo configurados con paginación (SIN CACHÉ - siempre datos frescos)
    */
   getConvenioRecaudoConfigurados(
     pagina: number = 1, 
     tamanoPagina: number = 10, 
     convenioId?: string
   ): Observable<ApiResponse<ConvenioRecaudoConfigurationList>> {
-    const cacheKey = this.cacheService.createKey('convenio_recaudo_configurados', pagina, tamanoPagina, convenioId);
     
-    return this.cacheService.cacheObservable(
-      cacheKey,
-      () => {
-        let params = new HttpParams()
-          .set('Pagina', pagina.toString())
-          .set('TamañoPagina', tamanoPagina.toString());
-        
-        // Agregar ConvenioId si se proporciona
-        if (convenioId) {
-          params = params.set('ConvenioId', convenioId);
-        }
-        
-        return this.http.get<ApiResponse<ConvenioRecaudoConfigurationList>>(
-          `${this.API_BASE_URL}/ConvenioRecaudo/ConvenioRecaudoConfigurados`,
-          { params }
-        );
-      },
-      this.CACHE_TIMES.CONFIGURATIONS
+    let params = new HttpParams()
+      .set('Pagina', pagina.toString())
+      .set('TamañoPagina', tamanoPagina.toString());
+    
+    // Agregar ConvenioId si se proporciona
+    if (convenioId) {
+      params = params.set('ConvenioId', convenioId);
+    }
+    
+    // SIEMPRE consultar la API para obtener datos frescos
+    return this.http.get<ApiResponse<ConvenioRecaudoConfigurationList>>(
+      `${this.API_BASE_URL}/ConvenioRecaudo/ConvenioRecaudoConfigurados`,
+      { params }
     );
   }
 
@@ -226,7 +221,7 @@ export class RecaudosService {
   }
 
   /**
-   * Actualizar convenio recaudo configurado (invalida caché relacionado)
+   * Actualizar convenio recaudo configurado (SIN CACHÉ - siempre datos frescos)
    */
   actualizarConvenioRecaudo(convenioData: ActualizarConvenioRecaudoRequest): Observable<ApiResponse<any>> {
     return new Observable(observer => {
@@ -235,8 +230,8 @@ export class RecaudosService {
         convenioData
       ).subscribe({
         next: (response) => {
-          // Limpiar caché relacionado después de actualizar
-          this.invalidateConveniosCache(convenioData.convenioRecaudo?.convenioId);
+          // NOTA: No es necesario invalidar caché ya que getConvenioRecaudoConfigurados() no usa caché
+          // Solo invalidamos caché de detalles específicos
           this.invalidateConvenioDetailCache(convenioData.convenioRecaudo?.id);
           
           observer.next(response);
@@ -250,7 +245,7 @@ export class RecaudosService {
   }
 
   /**
-   * Inactivar/Desactivar convenio recaudo configurado (invalida caché relacionado)
+   * Inactivar/Desactivar convenio recaudo configurado (SIN CACHÉ - siempre datos frescos)
    */
   inactivarConvenioRecaudo(id: number): Observable<ApiResponse<any>> {
     return new Observable(observer => {
@@ -258,8 +253,8 @@ export class RecaudosService {
         `${this.API_BASE_URL}/ConvenioRecaudo/InactivarConvenioRecaudo/${id}`
       ).subscribe({
         next: (response) => {
-          // Limpiar caché relacionado después de inactivar
-          this.invalidateAllConveniosCache();
+          // NOTA: No es necesario invalidar caché ya que getConvenioRecaudoConfigurados() no usa caché
+          // Solo invalidamos caché de detalles del convenio eliminado
           this.invalidateConvenioDetailCache(id);
           
           observer.next(response);
@@ -275,18 +270,31 @@ export class RecaudosService {
   // ============ MÉTODOS DE GESTIÓN DE CACHÉ ============
 
   /**
+   * Invalidar TODO el caché relacionado con convenios (para operaciones críticas)
+   */
+  private invalidateAllRelatedCache(convenioId?: number): void {
+    // Limpiar caché de listas de convenios configurados
+    this.invalidateAllConveniosCache();
+    
+    // Limpiar caché específico si se proporciona convenioId
+    if (convenioId) {
+      this.invalidateConvenioDetailCache(convenioId);
+    }
+  }
+
+  /**
+   * Limpiar TODO el caché del servicio (para operaciones de eliminación)
+   */
+  private invalidateAllCache(): void {
+    this.cacheService.clear();
+    console.log('🗑️ Todo el caché ha sido invalidado debido a operación crítica');
+  }
+
+  /**
    * Invalidar caché de convenios específicos
    */
   private invalidateConveniosCache(convenioId?: number): void {
     if (convenioId) {
-      // Buscar y eliminar todas las claves que contengan este convenioId
-      const keysToDelete: string[] = [];
-      
-      for (let i = 0; i < this.cacheService.size(); i++) {
-        // Nota: necesitaríamos acceso a las claves para hacer esto más eficiente
-        // Por simplicidad, limpiamos patrones conocidos
-      }
-      
       // Limpiar patrones conocidos que incluyan el convenioId
       this.cacheService.delete(this.cacheService.createKey('convenio_recaudo_configurados', 1, 10, convenioId.toString()));
     }
@@ -296,7 +304,7 @@ export class RecaudosService {
   }
 
   /**
-   * Invalidar todo el caché de convenios
+   * Invalidar todo el caché de convenios configurados
    */
   private invalidateAllConveniosCache(): void {
     // Limpiar cachés de convenios configurados (diferentes páginas)
@@ -306,6 +314,7 @@ export class RecaudosService {
         this.cacheService.delete(this.cacheService.createKey('convenio_recaudo_configurados', pagina, tamanoPagina, undefined));
       }
     }
+    console.log('🔄 Caché de convenios configurados invalidado');
   }
 
   /**
@@ -314,18 +323,19 @@ export class RecaudosService {
   private invalidateConvenioDetailCache(convenioId?: number): void {
     if (convenioId) {
       this.cacheService.delete(this.cacheService.createKey('convenio_recaudo_detalle', convenioId));
+      console.log(`🔄 Caché de detalle de convenio ${convenioId} invalidado`);
     }
   }
 
   /**
-   * Limpiar todo el caché del servicio
+   * Limpiar todo el caché del servicio (método público)
    */
   public clearAllCache(): void {
     this.cacheService.clear();
   }
 
   /**
-   * Limpiar caché expirado
+   * Limpiar caché expirado (método público)
    */
   public clearExpiredCache(): void {
     this.cacheService.clearExpired();
