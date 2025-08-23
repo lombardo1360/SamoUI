@@ -163,6 +163,16 @@
 
     <!-- Tabla de Convenios -->
     <div *ngIf="!isLoading && !error" class="table-container">
+      
+      <!-- Información de registros -->
+      <div *ngIf="conveniosConfigurados.length > 0" class="records-info">
+        <span class="records-text">
+          Mostrando {{ ((paginaActual - 1) * tamanoPagina) + 1 }} - 
+          {{ Math.min(paginaActual * tamanoPagina, getTotalRegistros()) }} 
+          de {{ getTotalRegistros() }} registros
+        </span>
+      </div>
+      
       <div class="table-content">
         <table class="convenios-table">
           <thead>
@@ -211,9 +221,10 @@
         </div>
       </div>
 
-      <!-- Paginación -->
-      <div *ngIf="totalPaginas > 1" class="pagination-container">
-        <div class="pagination">
+      <!-- Paginación y Controles -->
+      <div *ngIf="!isLoading && !error" class="pagination-container" [class.only-selector]="soloMostrarSelector()">
+        <!-- Navegación de páginas (solo si hay más de una página) -->
+        <div *ngIf="totalPaginas > 1" class="pagination">
           <button class="pagination-button" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
             ‹ Anterior
           </button>
@@ -227,6 +238,22 @@
             (click)="cambiarPagina(paginaActual + 1)">
             Siguiente ›
           </button>
+        </div>
+        
+        <!-- Dropdown para seleccionar tamaño de página (siempre visible) -->
+        <div class="page-size-selector">
+          <label for="pageSize">Mostrar:</label>
+          <select 
+            id="pageSize" 
+            [(ngModel)]="tamanoPagina" 
+            (change)="cambiarTamanoPagina(tamanoPagina)"
+            class="page-size-dropdown">
+            <option 
+              *ngFor="let opcion of opcionesTamanoPagina" 
+              [value]="opcion.valor">
+              {{ opcion.etiqueta }}
+            </option>
+          </select>
         </div>
       </div>
     </div>

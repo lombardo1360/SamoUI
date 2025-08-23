@@ -537,6 +537,24 @@
   padding: $space-lg $space-xl;
   background: linear-gradient(135deg, $secondary-50 0%, white 100%);
   border-top: 2px solid $secondary-100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-md;
+
+  // Si solo hay selector (sin navegación)
+  &.only-selector {
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $space-sm;
+    
+    &.only-selector {
+      align-items: flex-end;
+    }
+  }
   
   .pagination {
     display: flex;
@@ -581,6 +599,41 @@
         cursor: not-allowed;
         background: $secondary-100;
         color: $secondary-400;
+      }
+    }
+  }
+
+  .page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    
+    label {
+      font-weight: 500;
+      color: $secondary-700;
+      font-size: 0.9rem;
+    }
+    
+    .page-size-dropdown {
+      background: white;
+      border: 1px solid $secondary-300;
+      border-radius: $radius-md;
+      padding: $space-sm $space-md;
+      font-size: 0.9rem;
+      color: $secondary-700;
+      cursor: pointer;
+      transition: all $transition-fast;
+      box-shadow: $shadow-sm;
+      
+      &:hover {
+        border-color: $primary-500;
+        box-shadow: $shadow-md;
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       }
     }
   }

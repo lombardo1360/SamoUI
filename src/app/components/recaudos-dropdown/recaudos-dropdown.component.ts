@@ -52,8 +52,20 @@ export class RecaudosDropdownComponent implements OnInit, OnDestroy, AfterViewIn
   // Datos de la lista
   conveniosConfigurados: ConvenioRecaudoConfigurado[] = [];
   totalPaginas = 0;
+  totalRegistros = 0;
   paginaActual = 1;
   tamanoPagina = 10;
+  
+  // Opciones para el dropdown de tamaño de página
+  opcionesTamanoPagina = [
+    { valor: 5, etiqueta: '5 por página' },
+    { valor: 10, etiqueta: '10 por página' },
+    { valor: 20, etiqueta: '20 por página' },
+    { valor: 50, etiqueta: '50 por página' }
+  ];
+  
+  // Referencia a Math para usar en el template
+  Math = Math;
   
   // Estados
   isLoading = false;
@@ -516,6 +528,12 @@ onRecaudoSelect(event: any): void {
           if (response.codigo === 200) {
             this.conveniosConfigurados = response.datos.elementos;
             this.totalPaginas = response.datos.totalPaginas;
+            // Estimar total de registros: si es la última página, calcular exacto, sino estimar
+            if (this.paginaActual === this.totalPaginas) {
+              this.totalRegistros = (this.paginaActual - 1) * this.tamanoPagina + this.conveniosConfigurados.length;
+            } else {
+              this.totalRegistros = this.totalPaginas * this.tamanoPagina;
+            }
           } else {
             this.error = response.mensaje || 'Error al cargar los convenios configurados';
           }
@@ -584,6 +602,29 @@ onRecaudoSelect(event: any): void {
       this.paginaActual = pagina;
       this.loadConveniosConfigurados();
     }
+  }
+
+  /**
+   * Cambiar tamaño de página
+   */
+  cambiarTamanoPagina(nuevoTamano: number): void {
+    this.tamanoPagina = nuevoTamano;
+    this.paginaActual = 1; // Resetear a la primera página
+    this.loadConveniosConfigurados();
+  }
+
+  /**
+   * Obtener total de registros
+   */
+  getTotalRegistros(): number {
+    return this.totalRegistros;
+  }
+
+  /**
+   * Verificar si solo se debe mostrar el selector de página (sin paginación)
+   */
+  soloMostrarSelector(): boolean {
+    return this.totalPaginas <= 1;
   }
 
   /**
